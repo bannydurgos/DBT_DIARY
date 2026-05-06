@@ -56,7 +56,7 @@
             border-bottom: 1px solid var(--color-border-tertiary);
             padding-bottom: 1rem;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
         }
 
@@ -95,7 +95,7 @@
             font-size: 13px;
             font-weight: 500;
             color: var(--color-text-primary);
-            min-width: 130px;
+            white-space: nowrap;
             justify-content: space-between;
         }
 
@@ -126,7 +126,7 @@
             border-radius: var(--border-radius-md);
             padding: 0.4rem;
             z-index: 100;
-            min-width: 160px;
+            min-width: 100%;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
@@ -165,6 +165,7 @@
 
         .tabs {
             display: flex;
+            justify-content: center;
             gap: 1rem;
             margin-bottom: 2rem;
             border-bottom: 1px solid var(--color-border-tertiary);
@@ -205,12 +206,12 @@
             border-radius: var(--border-radius-lg);
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            transition: background 0.3s ease;
         }
 
         .step-header {
             font-size: 18px;
             font-weight: 500;
-            margin-bottom: 1.5rem;
             color: var(--color-text-primary);
         }
 
@@ -698,15 +699,6 @@
                 font-size: 22px;
             }
 
-            .mood-trigger {
-                min-width: 0;
-                width: 100%;
-            }
-
-            .mood-dropdown {
-                width: 100%;
-            }
-
             /* Tabs: scrollable single row */
             .tabs {
                 gap: 0;
@@ -779,16 +771,6 @@
                 <img src="icon.svg" alt="DBT Diary" style="height: 48px; width: 48px; border-radius: 12px;">
                 <span style="font-size: 22px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">DBT Diary</span>
             </div>
-            <div class="mood-dropdown" id="moodDropdown">
-                <button type="button" class="mood-trigger" id="moodTrigger">
-                    <span style="display:flex;align-items:center;gap:0.5rem;">
-                        <span class="mood-trigger-swatch" id="moodTriggerSwatch" style="display:none;"></span>
-                        <span id="moodTriggerLabel">TODAY'S MOOD</span>
-                    </span>
-                    <span class="mood-trigger-arrow">▼</span>
-                </button>
-                <div class="mood-menu" id="moodMenu"></div>
-            </div>
         </div>
 
         <div class="tabs">
@@ -801,22 +783,30 @@
 
         <!-- New Entry Tab -->
         <div id="entry" class="tab-content active">
-            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                <p style="font-size: 14px; color: var(--color-text-secondary);">
-                    <span class="live-indicator"></span>
-                    Updates save automatically as you make changes
-                </p>
-                <div style="display: flex; align-items: center; gap: 0.5rem; position: relative;">
-                    <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 0.25rem;color:var(--color-text-secondary);">&#8592;</button>
-                    <div id="entryDateDisplay" style="font-size: 14px; font-weight: 500; color: var(--color-text-primary); white-space: nowrap; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px;"></div>
+            <div style="margin-bottom: 1.5rem; margin-top: -1rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%; position: relative;">
+                    <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size:22px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8592;</button>
+                    <div id="entryDateDisplay" style="flex:1; cursor:pointer;" title="Click to pick a date"></div>
                     <input type="date" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;" />
-                    <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 0.25rem;color:var(--color-text-secondary);">&#8594;</button>
+                    <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size:22px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8594;</button>
                 </div>
             </div>
 
             <!-- Step 1: Screening Questionnaire -->
-            <div class="form-section">
-                <div class="step-header">Daily check-in</div>
+            <div class="form-section" id="checkinSection">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+                    <div class="step-header" style="margin-bottom:0;">Daily check-in</div>
+                    <div class="mood-dropdown" id="moodDropdown">
+                        <button type="button" class="mood-trigger" id="moodTrigger">
+                            <span style="display:flex;align-items:center;gap:0.5rem;">
+                                <span class="mood-trigger-swatch" id="moodTriggerSwatch" style="display:none;"></span>
+                                <span id="moodTriggerLabel">TODAY'S MOOD</span>
+                            </span>
+                            <span class="mood-trigger-arrow">▼</span>
+                        </button>
+                        <div class="mood-menu" id="moodMenu"></div>
+                    </div>
+                </div>
                 <form id="screeningForm">
                     <!-- Q1: Meds -->
                     <div class="form-group">
@@ -1090,6 +1080,19 @@
             });
         }
 
+        function setDateDisplay(dateStr) {
+            const text = formatEntryDate(dateStr);
+            document.getElementById('entryDateDisplay').innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 1000 90" style="display:block;">
+                    <g transform="scale(1, 0.55)">
+                        <text y="118" textLength="1000" lengthAdjust="spacingAndGlyphs"
+                              font-family="'Arial Black','Impact',sans-serif"
+                              font-weight="900" font-size="88"
+                              fill="var(--color-text-primary)">${text}</text>
+                    </g>
+                </svg>`;
+        }
+
         function clearFormUI() {
             draftData = {};
             document.getElementById('screeningForm').reset();
@@ -1104,6 +1107,8 @@
             document.getElementById('sleep').value = '5';
             document.getElementById('moodTriggerLabel').textContent = "TODAY'S MOOD";
             document.getElementById('moodTriggerSwatch').style.display = 'none';
+            const section = document.getElementById('checkinSection');
+            if (section) section.style.background = '';
         }
 
         function loadDraftForDate(date) {
@@ -1125,7 +1130,7 @@
             const today = getEasternDate();
             if (next <= today) {
                 selectedEntryDate = next;
-                document.getElementById('entryDateDisplay').textContent = formatEntryDate(selectedEntryDate);
+                setDateDisplay(selectedEntryDate);
                 document.getElementById('dateNext').style.opacity = selectedEntryDate === today ? '0.3' : '1';
                 loadDraftForDate(selectedEntryDate);
             }
@@ -1133,7 +1138,7 @@
 
         function init() {
             selectedEntryDate = getEasternDate();
-            document.getElementById('entryDateDisplay').textContent = formatEntryDate(selectedEntryDate);
+            setDateDisplay(selectedEntryDate);
             document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
             document.getElementById('datePrev').addEventListener('click', () => shiftEntryDate(-1));
             document.getElementById('dateNext').addEventListener('click', () => shiftEntryDate(1));
@@ -1145,7 +1150,7 @@
             datePicker.addEventListener('change', () => {
                 if (datePicker.value && datePicker.value <= getEasternDate()) {
                     selectedEntryDate = datePicker.value;
-                    document.getElementById('entryDateDisplay').textContent = formatEntryDate(selectedEntryDate);
+                    setDateDisplay(selectedEntryDate);
                     document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
                     loadDraftForDate(selectedEntryDate);
                 }
@@ -1219,6 +1224,8 @@
             const swatch = document.getElementById('moodTriggerSwatch');
             swatch.style.backgroundColor = mood.color;
             swatch.style.display = 'inline-block';
+            const section = document.getElementById('checkinSection');
+            if (section) section.style.background = mood.color + '33';
         }
 
         function selectMood(moodName) {
