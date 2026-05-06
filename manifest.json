@@ -1,0 +1,16 @@
+{
+  "name": "DBT Diary",
+  "short_name": "DBT Diary",
+  "start_url": "/DBT_DIARY/",
+  "display": "standalone",
+  "background_color": "#7C3AED",
+  "theme_color": "#7C3AED",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
