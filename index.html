@@ -845,9 +845,9 @@
             <!-- Wizard Step 1: Daily check-in -->
             <div class="wizard-step active">
             <div class="form-section" id="checkinSection">
-                <div style="position:relative; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
                     <div class="step-header" style="margin-bottom:0;">Daily check-in</div>
-                    <div class="mood-dropdown" id="moodDropdown" style="position:absolute; right:0;">
+                    <div class="mood-dropdown" id="moodDropdown">
                         <button type="button" class="mood-trigger" id="moodTrigger">
                             <span style="display:flex;align-items:center;gap:0.5rem;">
                                 <span class="mood-trigger-swatch" id="moodTriggerSwatch" style="display:none;"></span>
@@ -1150,7 +1150,7 @@
         function setDateDisplay(dateStr) {
             const text = formatEntryDate(dateStr);
             document.getElementById('entryDateDisplay').innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="-6 0 1012 90" style="display:block;overflow:visible;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="-6 0 1012 110" style="display:block;overflow:visible;">
                     <g transform="scale(1, 0.55)">
                         <text x="0" y="118" textLength="1000" lengthAdjust="spacingAndGlyphs"
                               font-family="'Arial Black','Impact',sans-serif"
