@@ -1430,7 +1430,13 @@
                 gratitude: draftData.gratitude || ''
             };
 
-            entries.push(entry);
+            const existingIndex = entries.findIndex(e => e.date === selectedEntryDate);
+            if (existingIndex >= 0) {
+                entry.id = entries[existingIndex].id;
+                entries[existingIndex] = entry;
+            } else {
+                entries.push(entry);
+            }
             saveToStorage();
 
             const notice = document.createElement('div');
