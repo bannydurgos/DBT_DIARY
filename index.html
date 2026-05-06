@@ -707,13 +707,6 @@
             display: block;
         }
 
-        .mood-mosaic {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 0;
-            margin-bottom: 2rem;
-        }
-
         .mosaic-tile {
             aspect-ratio: 1;
             border-radius: 0;
@@ -1064,7 +1057,7 @@
         <!-- Mood History Tab -->
         <div id="mood-history" class="tab-content">
             <div id="moodKey" style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.5rem 1rem;margin-bottom:1rem;padding:0.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);"></div>
-            <div class="mood-mosaic" id="moodMosaic"></div>
+            <div id="moodMosaic"></div>
         </div>
 
         <!-- Insights Tab -->
@@ -1265,6 +1258,8 @@
 
             const savedStep = parseInt(localStorage.getItem('wizardStep') || '0', 10);
             showWizardStep(savedStep);
+            const savedTab = localStorage.getItem('activeTab') || 'entry';
+            switchTab(savedTab);
             setupMoodPicker();
             renderMoodKey();
             setupEventListeners();
@@ -1516,9 +1511,10 @@
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            
+
             document.getElementById(tabName).classList.add('active');
             document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            localStorage.setItem('activeTab', tabName);
 
             if (tabName === 'view') renderEntries();
             if (tabName === 'mood-history') renderMoodMosaic();
@@ -1682,22 +1678,57 @@
         }
 
         function renderMoodMosaic() {
-            const mosaic = document.getElementById('moodMosaic');
-            
+            const container = document.getElementById('moodMosaic');
+
             if (entries.length === 0) {
-                mosaic.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><p>No mood data yet. Create entries to see your mood history.</p></div>';
+                container.innerHTML = '<div class="empty-state"><p>No mood data yet. Create entries to see your mood history.</p></div>';
                 return;
             }
 
             const sorted = [...entries].sort((a, b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`));
 
-            mosaic.innerHTML = sorted.map(entry => {
-                const color = entry.mood ? getMoodColor(entry.mood) : '#e0e0e0';
-                const [y, m, d] = entry.date.split('-');
-                const tileDate = `${m}/${d}/${y.slice(2)}`;
-                return `<div class="mosaic-tile" style="background-color: ${color};" title="${entry.mood || 'No mood'} - ${formatDate(entry.date)}" onclick="showEntryDetail(${entry.id})">${tileDate}</div>`;
+            // Group by YYYY-MM
+            const byMonth = {};
+            sorted.forEach(entry => {
+                const key = entry.date.slice(0, 7); // YYYY-MM
+                if (!byMonth[key]) byMonth[key] = [];
+                byMonth[key].push(entry);
+            });
+
+            const monthKeys = Object.keys(byMonth).sort().reverse();
+
+            container.innerHTML = monthKeys.map((key, idx) => {
+                const [y, m] = key.split('-');
+                const label = new Date(`${key}-15`).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                const isOpen = idx === 0; // most recent month open by default
+                const tiles = byMonth[key].map(entry => {
+                    const color = entry.mood ? getMoodColor(entry.mood) : '#e0e0e0';
+                    const d = entry.date.split('-')[2];
+                    return `<div class="mosaic-tile" style="background-color:${color};" title="${entry.mood || 'No mood'} — ${formatDate(entry.date)}" onclick="showEntryDetail(${entry.id})">${parseInt(d)}</div>`;
+                }).join('');
+
+                return `
+                    <div style="margin-bottom:0.75rem;">
+                        <button type="button" onclick="toggleMosaicMonth('month-${key}')" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.75rem;background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;font-size:14px;font-weight:600;color:var(--color-text-primary);text-transform:uppercase;letter-spacing:0.5px;">
+                            <span>${label}</span>
+                            <span id="month-${key}-arrow" style="font-size:11px;color:var(--color-text-secondary);">${isOpen ? '▲' : '▼'}</span>
+                        </button>
+                        <div id="month-${key}" style="display:${isOpen ? 'grid' : 'none'};grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:0;margin-top:2px;">
+                            ${tiles}
+                        </div>
+                    </div>
+                `;
             }).join('');
         }
+
+        function toggleMosaicMonth(id) {
+            const el = document.getElementById(id);
+            const arrow = document.getElementById(id + '-arrow');
+            const open = el.style.display === 'none';
+            el.style.display = open ? 'grid' : 'none';
+            arrow.textContent = open ? '▲' : '▼';
+        }
+        window.toggleMosaicMonth = toggleMosaicMonth;
 
         function renderMoodKey() {
             const key = document.getElementById('moodKey');
