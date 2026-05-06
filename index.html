@@ -1150,9 +1150,9 @@
         function setDateDisplay(dateStr) {
             const text = formatEntryDate(dateStr);
             document.getElementById('entryDateDisplay').innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 1000 90" style="display:block;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="-6 0 1012 90" style="display:block;overflow:visible;">
                     <g transform="scale(1, 0.55)">
-                        <text y="118" textLength="1000" lengthAdjust="spacingAndGlyphs"
+                        <text x="0" y="118" textLength="1000" lengthAdjust="spacingAndGlyphs"
                               font-family="'Arial Black','Impact',sans-serif"
                               font-weight="900" font-size="88"
                               fill="var(--color-text-primary)">${text}</text>
