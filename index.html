@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBT Diary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+            background: var(--color-background-tertiary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-border-tertiary);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 500;
+        }
+
+        .mood-picker {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .mood-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 0.5rem;
+        }
+
+        .mood-button {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mood-button:hover {
+            transform: scale(1.1);
+        }
+
+        .mood-button.selected {
+            border-color: var(--color-text-primary);
+            box-shadow: 0 0 0 2px var(--color-background-primary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--color-border-tertiary);
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button.active {
+            color: var(--color-text-primary);
+            border-bottom-color: var(--color-text-primary);
+        }
+
+        .tab-button:hover {
+            color: var(--color-text-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-section {
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-header {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--color-text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .question-number {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .button-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .option-button {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--color-border-tertiary);
+            background: var(--color-background-primary);
+            color: var(--color-text-primary);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-button:hover {
+            border-color: var(--color-border-secondary);
+            background: var(--color-background-secondary);
+        }
+
+        .option-button.selected {
+            background: var(--color-text-primary);
+            color: var(--color-background-primary);
+            border-color: var(--color-text-primary);
+        }
+
+        .slider-group {
+            display: grid;
+            grid-template-columns: 1fr 60px;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--color-background-primary);
+            color: var(--color-text-primary);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-border-primary);
+            box-shadow: 0 0 0 2px var(--color-border-tertiary);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .text-boxes-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .text-box-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .text-box-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--color-text-primary);
+        }
+
+        .text-box-item textarea {
+            min-height: 100px;
+        }
+
+        .meal-checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .meal-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--color-background-primary);
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .meal-checkbox:hover {
+            border-color: var(--color-border-secondary);
+            background: var(--color-background-tertiary);
+        }
+
+        .meal-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .meal-checkbox input[type="checkbox"]:checked + label {
+            font-weight: 500;
+        }
+
+        .meal-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--color-text-primary);
+            color: var(--color-background-primary);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.85;
+        }
+
+        .btn-secondary {
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border-tertiary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border-tertiary);
+        }
+
+        .entries-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .entry-card {
+            background: var(--color-background-secondary);
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .entry-card:hover {
+            border-color: var(--color-border-primary);
+            background: var(--color-background-primary);
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+
+        .entry-date {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .entry-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meta-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-tertiary);
+        }
+
+        .meta-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state p {
+            margin-bottom: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-background-primary);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            width: 90%;
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+
+        .detail-row {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-border-tertiary);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-content {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--color-background-secondary);
+            border-radius: var(--border-radius-lg);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 500;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .save-notice {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .section-card {
+            background: var(--color-background-primary);
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .skills-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .skill-item {
+            background: var(--color-background-secondary);
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-md);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .skill-item:hover {
+            border-color: var(--color-border-secondary);
+            background: var(--color-background-tertiary);
+        }
+
+        .skill-item.selected {
+            border-color: var(--color-text-primary);
+            background: var(--color-background-primary);
+        }
+
+        .skill-name {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-md);
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--color-background-secondary);
+            color: var(--color-text-primary);
+            display: none;
+        }
+
+        .skill-item.selected .skill-input {
+            display: block;
+        }
+
+        .mood-mosaic {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .mosaic-tile {
+            aspect-ratio: 1;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.4);
+            font-weight: 500;
+        }
+
+        .mosaic-tile:hover {
+            transform: scale(1.05);
+            border-color: rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DBT Diary</h1>
+            <div class="mood-picker" id="moodPicker">
+                <div class="mood-label">Today's mood</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="entry">New entry</button>
+            <button class="tab-button" data-tab="view">View entries</button>
+            <button class="tab-button" data-tab="mood-history">Mood history</button>
+            <button class="tab-button" data-tab="insights">Insights</button>
+        </div>
+
+        <!-- New Entry Tab -->
+        <div id="entry" class="tab-content active">
+            <div style="margin-bottom: 1.5rem;">
+                <p style="font-size: 14px; color: var(--color-text-secondary);">
+                    <span class="live-indicator"></span>
+                    Updates save automatically as you make changes
+                </p>
+            </div>
+
+            <!-- Step 1: Screening Questionnaire -->
+            <div class="form-section">
+                <div class="step-header">Daily check-in</div>
+                <form id="screeningForm">
+                    <!-- Q1: Meds -->
+                    <div class="form-group">
+                        <div class="question-number">Question 1 of 9</div>
+                        <label class="question-label">Took medications today?</label>
+                        <div class="button-options">
+                            <button type="button" class="option-button" data-field="meds" data-value="yes">Yes</button>
+                            <button type="button" class="option-button" data-field="meds" data-value="no">No</button>
+                        </div>
+                    </div>
+
+                    <!-- Q2: Depression -->
+                    <div class="form-group">
+                        <div class="question-number">Question 2 of 9</div>
+                        <label class="question-label">Depression level</label>
+                        <div class="button-options">
+                            <button type="button" class="option-button" data-field="depression" data-value="0">0</button>
+                            <button type="button" class="option-button" data-field="depression" data-value="1">1</button>
+                            <button type="button" class="option-button" data-field="depression" data-value="2">2</button>
+                            <button type="button" class="option-button" data-field="depression" data-value="3">3</button>
+                            <button type="button" class="option-button" data-field="depression" data-value="4">4</button>
+                            <button type="button" class="option-button" data-field="depression" data-value="5">5</button>
+                        </div>
+                    </div>
+
+                    <!-- Q3: Anxiety -->
+                    <div class="form-group">
+                        <div class="question-number">Question 3 of 9</div>
+                        <label class="question-label">Anxiety level</label>
+                        <div class="button-options">
+                            <button type="button" class="option-button" data-field="anxiety" data-value="0">0</button>
+                            <button type="button" class="option-button" data-field="anxiety" data-value="1">1</button>
+                            <button type="button" class="option-button" data-field="anxiety" data-value="2">2</button>
+                            <button type="button" class="option-button" data-field="anxiety" data-value="3">3</button>
+                            <button type="button" class="option-button" data-field="anxiety" data-value="4">4</button>
+                            <button type="button" class="option-button" data-field="anxiety" data-value="5">5</button>
+                        </div>
+                    </div>
+
+                    <!-- Q4: SI -->
+                    <div class="form-group">
+                        <div class="question-number">Question 4 of 9</div>
+                        <label class="question-label">Suicidal ideation (S.I.) level</label>
+                        <div class="button-options">
+                            <button type="button" class="option-button" data-field="suicidal_ideation" data-value="0">0</button>
+                            <button type="button" class="option-button" data-field="suicidal_ideation" data-value="1">1</button>
+                            <button type="button" class="option-button" data-field="suicidal_ideation" data-value="2">2</button>
+                            <button type="button" class="option-button" data-field="suicidal_ideation" data-value="3">3</button>
+                            <button type="button" class="option-button" data-field="suicidal_ideation" data-value="4">4</button>
+                            <button type="button" class="option-button" data-field="suicidal_ideation" data-value="5">5</button>
+                        </div>
+                    </div>
+
+                    <!-- Q5: SIB -->
+                    <div class="form-group">
+                        <div class="question-number">Question 5 of 9</div>
+                        <label class="question-label">Self-injurious behavior (S.I.B.) urges level</label>
+                        <div class="button-options">
+                            <button type="button" class="option-button" data-field="sib_urges" data-value="0">0</button>
+                            <button type="button" class="option-button" data-field="sib_urges" data-value="1">1</button>
+                            <button type="button" class="option-button" data-field="sib_urges" data-value="2">2</button>
+                            <button type="button" class="option-button" data-field="sib_urges" data-value="3">3</button>
+                            <button type="button" class="option-button" data-field="sib_urges" data-value="4">4</button>
+                            <button type="button" class="option-button" data-field="sib_urges" data-value="5">5</button>
+                        </div>
+                    </div>
+
+                    <!-- Q6: Carried out SIB -->
+                    <div class="form-group">
+                        <div class="question-number">Question 6 of 9</div>
+                        <label class="question-label">Carried out self-injurious behavior?</label>
+                        <div class="button-options">
+                            <button type="button" class="option-button" data-field="sib_carried_out" data-value="yes">Yes</button>
+                            <button type="button" class="option-button" data-field="sib_carried_out" data-value="no">No</button>
+                        </div>
+                    </div>
+
+                    <!-- Q7: TIB -->
+                    <div class="form-group">
+                        <div class="question-number">Question 7 of 9</div>
+                        <label class="question-label">Therapy-interfering behavior (T.I.B.)?</label>
+                        <div class="button-options">
+                            <button type="button" class="option-button" data-field="tib" data-value="yes">Yes</button>
+                            <button type="button" class="option-button" data-field="tib" data-value="no">No</button>
+                        </div>
+                    </div>
+
+                    <!-- Q8: Sleep -->
+                    <div class="form-group">
+                        <div class="question-number">Question 8 of 9</div>
+                        <label class="question-label">Sleep quality (1-10)</label>
+                        <div class="slider-group">
+                            <input type="range" id="sleep" name="sleep" min="1" max="10" value="5" data-field="sleep">
+                            <div class="slider-value" id="sleepValue">5</div>
+                        </div>
+                    </div>
+
+                    <!-- Q9: Meals -->
+                    <div class="form-group">
+                        <div class="question-number">Question 9 of 9</div>
+                        <label class="question-label">Meals eaten today</label>
+                        <div class="meal-checklist" id="mealChecklist">
+                            <div class="meal-checkbox">
+                                <input type="checkbox" id="meal-1" data-meal="1" value="breakfast">
+                                <label for="meal-1">Breakfast</label>
+                            </div>
+                            <div class="meal-checkbox">
+                                <input type="checkbox" id="meal-2" data-meal="1" value="lunch">
+                                <label for="meal-2">Lunch</label>
+                            </div>
+                            <div class="meal-checkbox">
+                                <input type="checkbox" id="meal-3" data-meal="1" value="dinner">
+                                <label for="meal-3">Dinner</label>
+                            </div>
+                            <div class="meal-checkbox">
+                                <input type="checkbox" id="meal-4" data-meal="1" value="snack1">
+                                <label for="meal-4">Snack 1</label>
+                            </div>
+                            <div class="meal-checkbox">
+                                <input type="checkbox" id="meal-5" data-meal="1" value="snack2">
+                                <label for="meal-5">Snack 2</label>
+                            </div>
+                            <div class="meal-checkbox">
+                                <input type="checkbox" id="meal-6" data-meal="1" value="snack3">
+                                <label for="meal-6">Snack 3</label>
+                            </div>
+                        </div>
+                        <div class="save-notice">Checked meals save automatically</div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Section 2: Daily Diary -->
+            <div class="section-card">
+                <div class="section-title">Daily diary entry</div>
+                <textarea id="diaryEntry" placeholder="What happened today? How did you handle it? Updates save as you type..."></textarea>
+                <div class="save-notice">Saves automatically</div>
+            </div>
+
+            <!-- Section 3: Skills Used -->
+            <div class="section-card">
+                <div class="section-title">Skills used today</div>
+                <div class="skills-list" id="skillsList">
+                </div>
+                <div class="save-notice">Selections save automatically</div>
+            </div>
+
+            <!-- Section 4: Reflections -->
+            <div class="section-card">
+                <div class="section-title">Reflections</div>
+                <div class="text-boxes-grid">
+                    <div class="text-box-item">
+                        <label class="text-box-label">What feelings came up today?</label>
+                        <textarea id="feelings" placeholder="Describe the emotions you experienced..."></textarea>
+                    </div>
+
+                    <div class="text-box-item">
+                        <label class="text-box-label">Positive experiences</label>
+                        <textarea id="positive" placeholder="What went well? Any moments of joy or peace?"></textarea>
+                    </div>
+
+                    <div class="text-box-item">
+                        <label class="text-box-label">Gratitude</label>
+                        <textarea id="gratitude" placeholder="What are you grateful for today?"></textarea>
+                    </div>
+                </div>
+                <div class="save-notice">All reflections save automatically</div>
+            </div>
+
+            <div class="button-group" style="justify-content: center; margin-top: 2rem;">
+                <button type="button" class="btn-primary" onclick="completeEntry()">Complete entry</button>
+                <button type="button" class="btn-secondary" onclick="resetEntry()">Reset entry</button>
+            </div>
+        </div>
+
+        <!-- View Entries Tab -->
+        <div id="view" class="tab-content">
+            <div id="entriesList" class="entries-list"></div>
+        </div>
+
+        <!-- Mood History Tab -->
+        <div id="mood-history" class="tab-content">
+            <div class="mood-mosaic" id="moodMosaic"></div>
+        </div>
+
+        <!-- Insights Tab -->
+        <div id="insights" class="tab-content">
+            <div class="stats-grid" id="statsGrid"></div>
+            <div id="insightsContent"></div>
+        </div>
+    </div>
+
+    <!-- Entry Detail Modal -->
+    <div id="entryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Entry details</span>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'dbt_diary_entries';
+        const DRAFT_KEY = 'dbt_diary_draft';
+        let entries = [];
+        let draftData = {};
+
+        const moods = [
+            { name: 'Happy', color: '#FFE5CC' },
+            { name: 'Sad', color: '#CCE5FF' },
+            { name: 'Angry', color: '#FFCCCC' },
+            { name: 'Fearful', color: '#E5CCFF' },
+            { name: 'Surprised', color: '#FFFFCC' },
+            { name: 'Disgusted', color: '#CCFFCC' },
+            { name: 'Neutral', color: '#E8E8E8' },
+            { name: 'Calm', color: '#CCFFFF' }
+        ];
+
+        const skills = [
+            'TIPP (Temperature, Intense exercise, Paced breathing, Paired muscle relaxation)',
+            'ABC PLEASE (Accumulate positive experiences, Build mastery, Cope ahead, Physical self-care)',
+            'Mindfulness & meditation',
+            'Distress tolerance',
+            'Emotion regulation',
+            'Radical acceptance',
+            'Interpersonal effectiveness (DEAR MAN, GIVE, FAST)',
+            'Other'
+        ];
+
+        const screeningFields = [
+            'meds', 'depression', 'anxiety', 'suicidal_ideation', 
+            'sib_urges', 'sib_carried_out', 'tib', 'sleep', 'meals'
+        ];
+
+        function init() {
+            loadEntries();
+            loadDraft();
+            setupMoodPicker();
+            setupEventListeners();
+            renderSkillsList();
+            renderEntries();
+            renderMoodMosaic();
+            renderInsights();
+        }
+
+        function setupMoodPicker() {
+            const moodPicker = document.getElementById('moodPicker');
+            moods.forEach((mood) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'mood-button';
+                btn.style.backgroundColor = mood.color;
+                btn.title = mood.name;
+                btn.dataset.mood = mood.name;
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    selectMood(mood.name);
+                });
+                moodPicker.appendChild(btn);
+            });
+            
+            if (draftData.mood) {
+                const moodBtn = document.querySelector(`[data-mood="${draftData.mood}"]`);
+                if (moodBtn) moodBtn.classList.add('selected');
+            }
+        }
+
+        function selectMood(moodName) {
+            document.querySelectorAll('.mood-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelector(`[data-mood="${moodName}"]`).classList.add('selected');
+            draftData.mood = moodName;
+            saveDraft();
+        }
+
+        function renderSkillsList() {
+            const skillsList = document.getElementById('skillsList');
+            skillsList.innerHTML = skills.map((skill) => `
+                <div class="skill-item" data-skill="${skill}" onclick="toggleSkill('${skill}')">
+                    <div class="skill-name">${skill}</div>
+                    <input type="text" class="skill-input" placeholder="Write something about this skill..." data-skill-input="${skill}">
+                </div>
+            `).join('');
+
+            if (draftData.skills) {
+                Object.keys(draftData.skills).forEach(skill => {
+                    const item = document.querySelector(`[data-skill="${skill}"]`);
+                    if (item) {
+                        item.classList.add('selected');
+                        const input = item.querySelector('[data-skill-input]');
+                        if (input) input.value = draftData.skills[skill] || '';
+                    }
+                });
+            }
+        }
+
+        function toggleSkill(skillName) {
+            const item = document.querySelector(`[data-skill="${skillName}"]`);
+            item.classList.toggle('selected');
+
+            if (!draftData.skills) draftData.skills = {};
+
+            if (item.classList.contains('selected')) {
+                if (!draftData.skills[skillName]) {
+                    draftData.skills[skillName] = '';
+                }
+                const input = item.querySelector('[data-skill-input]');
+                input.focus();
+            } else {
+                delete draftData.skills[skillName];
+            }
+
+            saveDraft();
+        }
+
+        function setupEventListeners() {
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const field = this.dataset.field;
+                    const value = this.dataset.value;
+                    
+                    document.querySelectorAll(`[data-field="${field}"]`).forEach(b => {
+                        b.classList.remove('selected');
+                    });
+                    
+                    this.classList.add('selected');
+                    draftData[field] = value;
+                    saveDraft();
+                });
+            });
+
+            document.getElementById('sleep').addEventListener('input', function() {
+                document.getElementById('sleepValue').textContent = this.value;
+                draftData['sleep'] = this.value;
+                saveDraft();
+            });
+
+            document.querySelectorAll('#mealChecklist input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateMealCount();
+                    saveDraft();
+                });
+            });
+
+            document.getElementById('diaryEntry').addEventListener('input', function() {
+                draftData['diary_entry'] = this.value;
+                saveDraft();
+            });
+
+            document.querySelectorAll('[data-skill-input]').forEach(input => {
+                input.addEventListener('input', function() {
+                    const skill = this.dataset.skillInput;
+                    if (!draftData.skills) draftData.skills = {};
+                    draftData.skills[skill] = this.value;
+                    saveDraft();
+                });
+            });
+
+            ['feelings', 'positive', 'gratitude'].forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    draftData[id] = this.value;
+                    saveDraft();
+                });
+            });
+        }
+
+        function updateMealCount() {
+            const checked = document.querySelectorAll('#mealChecklist input[type="checkbox"]:checked').length;
+            draftData['meals'] = checked.toString();
+        }
+
+        function loadDraft() {
+            const stored = localStorage.getItem(DRAFT_KEY);
+            if (stored) {
+                draftData = JSON.parse(stored);
+                restoreDraftUI();
+            }
+        }
+
+        function restoreDraftUI() {
+            Object.keys(draftData).forEach(field => {
+                if (field === 'sleep' || field === 'diary_entry' || field === 'meals' || field === 'feelings' || field === 'positive' || field === 'gratitude' || field === 'mood' || field === 'skills') {
+                    return;
+                }
+                const value = draftData[field];
+                const btn = document.querySelector(`[data-field="${field}"][data-value="${value}"]`);
+                if (btn) {
+                    btn.classList.add('selected');
+                }
+            });
+
+            if (draftData['sleep']) {
+                document.getElementById('sleep').value = draftData['sleep'];
+                document.getElementById('sleepValue').textContent = draftData['sleep'];
+            }
+
+            if (draftData['diary_entry']) {
+                document.getElementById('diaryEntry').value = draftData['diary_entry'];
+            }
+
+            if (draftData['meals']) {
+                const mealsCount = parseInt(draftData['meals']);
+                document.querySelectorAll('#mealChecklist input[type="checkbox"]').forEach((cb, i) => {
+                    if (i < mealsCount) {
+                        cb.checked = true;
+                    }
+                });
+            }
+
+            if (draftData['feelings']) document.getElementById('feelings').value = draftData['feelings'];
+            if (draftData['positive']) document.getElementById('positive').value = draftData['positive'];
+            if (draftData['gratitude']) document.getElementById('gratitude').value = draftData['gratitude'];
+        }
+
+        function saveDraft() {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(draftData));
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            if (tabName === 'view') renderEntries();
+            if (tabName === 'mood-history') renderMoodMosaic();
+            if (tabName === 'insights') renderInsights();
+        }
+
+        function completeEntry() {
+            const allFilled = screeningFields.every(field => draftData[field] !== undefined);
+            if (!allFilled) {
+                alert('Please complete the daily check-in questions');
+                return;
+            }
+
+            const skillsArray = draftData.skills ? Object.entries(draftData.skills).map(([skill, note]) => ({ skill, note })) : [];
+
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toTimeString().split(' ')[0],
+                mood: draftData.mood || '',
+                meds: draftData.meds,
+                depression: parseInt(draftData.depression),
+                anxiety: parseInt(draftData.anxiety),
+                suicidal_ideation: parseInt(draftData.suicidal_ideation),
+                sib_urges: parseInt(draftData.sib_urges),
+                sib_carried_out: draftData.sib_carried_out,
+                tib: draftData.tib,
+                sleep: parseInt(draftData.sleep),
+                meals: parseInt(draftData.meals),
+                diary_entry: draftData.diary_entry || '',
+                skills: skillsArray,
+                feelings: draftData.feelings || '',
+                positive_experiences: draftData.positive || '',
+                gratitude: draftData.gratitude || ''
+            };
+
+            entries.push(entry);
+            saveToStorage();
+            
+            localStorage.removeItem(DRAFT_KEY);
+            draftData = {};
+            
+            document.getElementById('screeningForm').reset();
+            document.getElementById('diaryEntry').value = '';
+            document.getElementById('feelings').value = '';
+            document.getElementById('positive').value = '';
+            document.getElementById('gratitude').value = '';
+            document.querySelectorAll('.option-button.selected').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelectorAll('.mood-button.selected').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+            document.querySelectorAll('.skill-item.selected').forEach(item => {
+                item.classList.remove('selected');
+            });
+            document.getElementById('sleepValue').textContent = '5';
+            document.getElementById('sleep').value = '5';
+            
+            alert('Entry completed and saved!');
+            switchTab('view');
+            renderEntries();
+            renderMoodMosaic();
+            renderInsights();
+        }
+
+        function resetEntry() {
+            if (confirm('Clear this draft entry? Changes will be lost.')) {
+                localStorage.removeItem(DRAFT_KEY);
+                draftData = {};
+                document.getElementById('screeningForm').reset();
+                document.getElementById('diaryEntry').value = '';
+                document.getElementById('feelings').value = '';
+                document.getElementById('positive').value = '';
+                document.getElementById('gratitude').value = '';
+                document.querySelectorAll('.option-button.selected').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                document.querySelectorAll('.mood-button.selected').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
+                document.querySelectorAll('.skill-item.selected').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                document.querySelectorAll('[data-skill-input]').forEach(input => {
+                    input.value = '';
+                });
+                document.getElementById('sleepValue').textContent = '5';
+                document.getElementById('sleep').value = '5';
+            }
+        }
+
+        function loadEntries() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            entries = stored ? JSON.parse(stored) : [];
+        }
+
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+        }
+
+        function renderEntries() {
+            const container = document.getElementById('entriesList');
+            
+            if (entries.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No entries yet. Start by creating a new entry.</p></div>';
+                return;
+            }
+
+            const sorted = [...entries].sort((a, b) => new Date(`${b.date} ${b.time}`) - new Date(`${a.date} ${a.time}`));
+
+            container.innerHTML = sorted.map(entry => `
+                <div class="entry-card" onclick="showEntryDetail(${entry.id})">
+                    <div class="entry-header">
+                        <div class="entry-date">${formatDate(entry.date)} at ${entry.time}</div>
+                        ${entry.mood ? `<div style="width: 20px; height: 20px; border-radius: 50%; background-color: ${getMoodColor(entry.mood)};" title="${entry.mood}"></div>` : ''}
+                    </div>
+                    <div style="font-size: 14px; color: var(--color-text-secondary); margin-bottom: 0.75rem; line-height: 1.5;">
+                        ${entry.diary_entry ? entry.diary_entry.substring(0, 100) + (entry.diary_entry.length > 100 ? '...' : '') : '(no diary entry)'}
+                    </div>
+                    <div class="entry-meta">
+                        <div class="meta-item">
+                            <div class="meta-label">Depression</div>
+                            <div class="meta-value">${entry.depression}/5</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Anxiety</div>
+                            <div class="meta-value">${entry.anxiety}/5</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">S.I.</div>
+                            <div class="meta-value">${entry.suicidal_ideation}/5</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Sleep</div>
+                            <div class="meta-value">${entry.sleep}/10</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="meta-label">Meals</div>
+                            <div class="meta-value">${entry.meals}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMoodMosaic() {
+            const mosaic = document.getElementById('moodMosaic');
+            
+            if (entries.length === 0) {
+                mosaic.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><p>No mood data yet. Create entries to see your mood history.</p></div>';
+                return;
+            }
+
+            const sorted = [...entries].sort((a, b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`));
+
+            mosaic.innerHTML = sorted.map(entry => {
+                const color = entry.mood ? getMoodColor(entry.mood) : '#e0e0e0';
+                return `<div class="mosaic-tile" style="background-color: ${color};" title="${entry.mood || 'No mood'} - ${formatDate(entry.date)}">${formatDate(entry.date).substring(0, 3)}</div>`;
+            }).join('');
+        }
+
+        function getMoodColor(moodName) {
+            const mood = moods.find(m => m.name === moodName);
+            return mood ? mood.color : '#e0e0e0';
+        }
+
+        function showEntryDetail(id) {
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+
+            const modal = document.getElementById('entryModal');
+            const body = document.getElementById('modalBody');
+
+            body.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Date & time</div>
+                    <div class="detail-content">${formatDate(entry.date)} at ${entry.time}</div>
+                </div>
+                ${entry.mood ? `
+                <div class="detail-row">
+                    <div class="detail-label">Mood</div>
+                    <div class="detail-content" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 20px; height: 20px; border-radius: 50%; background-color: ${getMoodColor(entry.mood)};"></div>
+                        ${entry.mood}
+                    </div>
+                </div>
+                ` : ''}
+                <div class="detail-row">
+                    <div class="detail-label">Medications</div>
+                    <div class="detail-content">${capitalizeFirst(entry.meds)}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Depression</div>
+                    <div class="detail-content">${entry.depression}/5</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Anxiety</div>
+                    <div class="detail-content">${entry.anxiety}/5</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Suicidal ideation (S.I.)</div>
+                    <div class="detail-content">${entry.suicidal_ideation}/5</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Self-injurious behavior urges (S.I.B.)</div>
+                    <div class="detail-content">${entry.sib_urges}/5</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Carried out S.I.B.</div>
+                    <div class="detail-content">${capitalizeFirst(entry.sib_carried_out)}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Therapy-interfering behavior (T.I.B.)</div>
+                    <div class="detail-content">${capitalizeFirst(entry.tib)}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Sleep quality</div>
+                    <div class="detail-content">${entry.sleep}/10</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Meals eaten</div>
+                    <div class="detail-content">${entry.meals}</div>
+                </div>
+                ${entry.diary_entry ? `
+                <div class="detail-row">
+                    <div class="detail-label">Daily diary</div>
+                    <div class="detail-content">${entry.diary_entry}</div>
+                </div>
+                ` : ''}
+                ${entry.skills && entry.skills.length > 0 ? `
+                <div class="detail-row">
+                    <div class="detail-label">Skills used</div>
+                    <div class="detail-content">
+                        ${entry.skills.map(s => `<div style="margin-bottom: 0.5rem;"><strong>${s.skill}</strong>${s.note ? `: ${s.note}` : ''}</div>`).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                ${entry.feelings ? `
+                <div class="detail-row">
+                    <div class="detail-label">Feelings</div>
+                    <div class="detail-content">${entry.feelings}</div>
+                </div>
+                ` : ''}
+                ${entry.positive_experiences ? `
+                <div class="detail-row">
+                    <div class="detail-label">Positive experiences</div>
+                    <div class="detail-content">${entry.positive_experiences}</div>
+                </div>
+                ` : ''}
+                ${entry.gratitude ? `
+                <div class="detail-row">
+                    <div class="detail-label">Gratitude</div>
+                    <div class="detail-content">${entry.gratitude}</div>
+                </div>
+                ` : ''}
+                <button class="btn-primary" onclick="deleteEntry(${entry.id})">Delete entry</button>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('entryModal').classList.remove('active');
+        }
+
+        function deleteEntry(id) {
+            if (confirm('Are you sure you want to delete this entry?')) {
+                entries = entries.filter(e => e.id !== id);
+                saveToStorage();
+                closeModal();
+                renderEntries();
+                renderMoodMosaic();
+                renderInsights();
+            }
+        }
+
+        function renderInsights() {
+            if (entries.length === 0) {
+                document.getElementById('statsGrid').innerHTML = '';
+                document.getElementById('insightsContent').innerHTML = '<div class="empty-state"><p>Create entries to see insights.</p></div>';
+                return;
+            }
+
+            const avgDepression = (entries.reduce((sum, e) => sum + e.depression, 0) / entries.length).toFixed(1);
+            const avgAnxiety = (entries.reduce((sum, e) => sum + e.anxiety, 0) / entries.length).toFixed(1);
+            const avgSI = (entries.reduce((sum, e) => sum + e.suicidal_ideation, 0) / entries.length).toFixed(1);
+            const avgSleep = (entries.reduce((sum, e) => sum + e.sleep, 0) / entries.length).toFixed(1);
+            const avgMeals = (entries.reduce((sum, e) => sum + e.meals, 0) / entries.length).toFixed(1);
+
+            const sibCarriedOut = entries.filter(e => e.sib_carried_out === 'yes').length;
+            const medsCount = entries.filter(e => e.meds === 'yes').length;
+
+            const skillCounts = {};
+            entries.forEach(e => {
+                if (e.skills && Array.isArray(e.skills)) {
+                    e.skills.forEach(s => {
+                        skillCounts[s.skill] = (skillCounts[s.skill] || 0) + 1;
+                    });
+                }
+            });
+
+            const statsHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${entries.length}</div>
+                    <div class="stat-label">Total entries</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${avgDepression}</div>
+                    <div class="stat-label">Avg depression</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${avgAnxiety}</div>
+                    <div class="stat-label">Avg anxiety</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${avgSleep}</div>
+                    <div class="stat-label">Avg sleep</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${avgMeals}</div>
+                    <div class="stat-label">Avg meals</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${medsCount}</div>
+                    <div class="stat-label">Days took meds</div>
+                </div>
+            `;
+
+            document.getElementById('statsGrid').innerHTML = statsHTML;
+
+            let insightsHTML = '';
+            
+            if (avgSI > 2) {
+                insightsHTML += '<div style="background: var(--color-danger, #f87171); background-opacity: 0.2; padding: 1rem; border-radius: var(--border-radius-lg); margin-bottom: 1rem; border-left: 4px solid var(--color-danger, #f87171);"><div style="font-weight: 500; margin-bottom: 0.5rem;">Alert: Elevated S.I.</div><div style="font-size: 14px;">Your average suicidal ideation is above 2. Please reach out to a therapist or crisis line if needed.</div></div>';
+            }
+
+            if (sibCarriedOut > 0) {
+                insightsHTML += `<div style="background: var(--color-warning, #facc15); background-opacity: 0.2; padding: 1rem; border-radius: var(--border-radius-lg); margin-bottom: 1rem; border-left: 4px solid var(--color-warning, #facc15);"><div style="font-weight: 500; margin-bottom: 0.5rem;">Note: S.I.B. carried out</div><div style="font-size: 14px;">You've engaged in self-injurious behavior on ${sibCarriedOut} day${sibCarriedOut > 1 ? 's' : ''}. Consider reviewing your DBT skills.</div></div>`;
+            }
+
+            insightsHTML += `
+                <h2 style="margin-bottom: 1rem; font-size: 18px; font-weight: 500;">Trends</h2>
+                <div style="display: grid; gap: 1rem; margin-bottom: 2rem;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="font-weight: 500;">Depression: ${avgDepression}/5</span>
+                        </div>
+                        <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); height: 8px; overflow: hidden;">
+                            <div style="background: var(--color-info); height: 100%; width: ${(avgDepression / 5) * 100}%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="font-weight: 500;">Anxiety: ${avgAnxiety}/5</span>
+                        </div>
+                        <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); height: 8px; overflow: hidden;">
+                            <div style="background: var(--color-info); height: 100%; width: ${(avgAnxiety / 5) * 100}%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                            <span style="font-weight: 500;">Sleep: ${avgSleep}/10</span>
+                        </div>
+                        <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); height: 8px; overflow: hidden;">
+                            <div style="background: var(--color-success, #4ade80); height: 100%; width: ${(avgSleep / 10) * 100}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (Object.keys(skillCounts).length > 0) {
+                insightsHTML += '<h2 style="margin-bottom: 1rem; font-size: 18px; font-weight: 500;">Most used skills</h2>';
+                insightsHTML += '<div style="display: grid; gap: 0.5rem;">';
+                Object.entries(skillCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5)
+                    .forEach(([skill, count]) => {
+                        insightsHTML += `<div style="font-size: 14px;">${skill}: <strong>${count}</strong> time${count > 1 ? 's' : ''}</div>`;
+                    });
+                insightsHTML += '</div>';
+            }
+
+            document.getElementById('insightsContent').innerHTML = insightsHTML;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        window.closeModal = closeModal;
+        window.showEntryDetail = showEntryDetail;
+        window.deleteEntry = deleteEntry;
+        window.completeEntry = completeEntry;
+        window.resetEntry = resetEntry;
+        window.toggleSkill = toggleSkill;
+
+        init();
+    </script>
+</body>
+</html>
