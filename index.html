@@ -653,22 +653,22 @@
         .mood-mosaic {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-            gap: 0.5rem;
+            gap: 0;
             margin-bottom: 2rem;
         }
 
         .mosaic-tile {
             aspect-ratio: 1;
-            border-radius: var(--border-radius-md);
+            border-radius: 0;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
-            color: rgba(0, 0, 0, 0.4);
-            font-weight: 500;
+            font-size: 9px;
+            color: rgba(0, 0, 0, 0.5);
+            font-weight: 600;
         }
 
         .mosaic-tile:hover {
@@ -796,7 +796,12 @@
                     <span class="live-indicator"></span>
                     Updates save automatically as you make changes
                 </p>
-                <div id="entryDateDisplay" style="font-size: 14px; font-weight: 500; color: var(--color-text-primary);"></div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; position: relative;">
+                    <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 0.25rem;color:var(--color-text-secondary);">&#8592;</button>
+                    <div id="entryDateDisplay" style="font-size: 14px; font-weight: 500; color: var(--color-text-primary); white-space: nowrap; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px;"></div>
+                    <input type="date" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;" />
+                    <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size:18px;padding:0 0.25rem;color:var(--color-text-secondary);">&#8594;</button>
+                </div>
             </div>
 
             <!-- Step 1: Screening Questionnaire -->
@@ -977,6 +982,7 @@
             </div>
         </div>
 
+
         <!-- View Entries Tab -->
         <div id="view" class="tab-content">
             <div id="entriesList" class="entries-list"></div>
@@ -995,6 +1001,7 @@
 
         <div id="daily-notes" class="tab-content">
             <div class="form-section">
+                <div style="font-size: 16px; font-weight: 500; margin-bottom: 1rem; color: var(--color-text-primary);" id="dailyNotesDate"></div>
                 <textarea id="dailyNotesText" placeholder="Scribble anything here..." style="min-height: 400px; font-size: 15px;"></textarea>
                 <div style="margin-top: 0.75rem; font-size: 12px; color: var(--color-text-tertiary);" id="dailyNotesSaved"></div>
             </div>
@@ -1030,6 +1037,7 @@
 
         let entries = [];
         let draftData = {};
+        let selectedEntryDate = null;
 
         const moods = [
             { name: 'Happy', color: '#FFE5CC' },
@@ -1066,12 +1074,74 @@
             return new Date().toLocaleTimeString('en-GB', { timeZone: 'America/New_York', hour12: false }); // HH:MM:SS
         }
 
-        function init() {
-            const etDate = new Date().toLocaleDateString('en-US', {
-                timeZone: 'America/New_York',
+        function formatEntryDate(dateStr) {
+            return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
                 weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
             });
-            document.getElementById('entryDateDisplay').textContent = etDate;
+        }
+
+        function clearFormUI() {
+            draftData = {};
+            document.getElementById('screeningForm').reset();
+            document.getElementById('diaryEntry').value = '';
+            document.getElementById('feelings').value = '';
+            document.getElementById('positive').value = '';
+            document.getElementById('gratitude').value = '';
+            document.querySelectorAll('.option-button.selected').forEach(btn => btn.classList.remove('selected'));
+            document.querySelectorAll('.skill-item.selected').forEach(item => item.classList.remove('selected'));
+            document.querySelectorAll('[data-skill-input]').forEach(input => { input.value = ''; });
+            document.getElementById('sleepValue').textContent = '5';
+            document.getElementById('sleep').value = '5';
+            document.getElementById('moodTriggerLabel').textContent = "TODAY'S MOOD";
+            document.getElementById('moodTriggerSwatch').style.display = 'none';
+        }
+
+        function loadDraftForDate(date) {
+            clearFormUI();
+            db.ref('drafts/' + date).once('value').then(snapshot => {
+                draftData = snapshot.val() || {};
+                restoreDraftUI();
+                restoreSkillsFromDraft();
+                if (draftData.mood) updateMoodTrigger(draftData.mood);
+            });
+            loadDailyNotesForDate(date);
+            document.getElementById('dailyNotesDate').textContent = formatEntryDate(date);
+        }
+
+        function shiftEntryDate(days) {
+            const d = new Date(selectedEntryDate + 'T12:00:00');
+            d.setDate(d.getDate() + days);
+            const next = d.toLocaleDateString('en-CA');
+            const today = getEasternDate();
+            if (next <= today) {
+                selectedEntryDate = next;
+                document.getElementById('entryDateDisplay').textContent = formatEntryDate(selectedEntryDate);
+                document.getElementById('dateNext').style.opacity = selectedEntryDate === today ? '0.3' : '1';
+                loadDraftForDate(selectedEntryDate);
+            }
+        }
+
+        function init() {
+            selectedEntryDate = getEasternDate();
+            document.getElementById('entryDateDisplay').textContent = formatEntryDate(selectedEntryDate);
+            document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
+            document.getElementById('datePrev').addEventListener('click', () => shiftEntryDate(-1));
+            document.getElementById('dateNext').addEventListener('click', () => shiftEntryDate(1));
+
+            const datePicker = document.getElementById('datePicker');
+            datePicker.max = getEasternDate();
+            datePicker.value = selectedEntryDate;
+            document.getElementById('entryDateDisplay').addEventListener('click', () => datePicker.showPicker());
+            datePicker.addEventListener('change', () => {
+                if (datePicker.value && datePicker.value <= getEasternDate()) {
+                    selectedEntryDate = datePicker.value;
+                    document.getElementById('entryDateDisplay').textContent = formatEntryDate(selectedEntryDate);
+                    document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
+                    loadDraftForDate(selectedEntryDate);
+                }
+            });
+
+            document.getElementById('dailyNotesDate').textContent = formatEntryDate(selectedEntryDate);
 
             setupMoodPicker();
             setupEventListeners();
@@ -1089,21 +1159,16 @@
                 renderInsights();
             });
 
-            // Draft: load once on startup, then write-on-change
-            db.ref('draft').once('value').then(snapshot => {
+            // Draft: load for today's date on startup
+            db.ref('drafts/' + selectedEntryDate).once('value').then(snapshot => {
                 draftData = snapshot.val() || {};
                 restoreDraftUI();
-                renderSkillsList();
+                restoreSkillsFromDraft();
                 if (draftData.mood) updateMoodTrigger(draftData.mood);
             });
 
-            // Daily notes: real-time, but skip update if textarea is focused
-            db.ref('dailyNotes').on('value', snapshot => {
-                const textarea = document.getElementById('dailyNotesText');
-                if (document.activeElement !== textarea) {
-                    textarea.value = snapshot.val() || '';
-                }
-            });
+            // Daily notes: load for the current date
+            loadDailyNotesForDate(selectedEntryDate);
         }
 
         function setupMoodPicker() {
@@ -1157,20 +1222,30 @@
             skillsList.innerHTML = skills.map((skill) => `
                 <div class="skill-item" data-skill="${skill}" onclick="toggleSkill('${skill}')">
                     <div class="skill-name">${skill}</div>
-                    <input type="text" class="skill-input" placeholder="Write something about this skill..." data-skill-input="${skill}">
+                    <input type="text" class="skill-input" placeholder="Write something about this skill..." data-skill-input="${skill}" onclick="event.stopPropagation()">
                 </div>
             `).join('');
 
-            if (draftData.skills) {
-                Object.keys(draftData.skills).forEach(skill => {
-                    const item = document.querySelector(`[data-skill="${skill}"]`);
-                    if (item) {
-                        item.classList.add('selected');
-                        const input = item.querySelector('[data-skill-input]');
-                        if (input) input.value = draftData.skills[skill] || '';
-                    }
+            document.querySelectorAll('[data-skill-input]').forEach(input => {
+                input.addEventListener('input', function() {
+                    const skill = this.dataset.skillInput;
+                    if (!draftData.skills) draftData.skills = {};
+                    draftData.skills[skill] = this.value;
+                    saveDraft();
                 });
-            }
+            });
+        }
+
+        function restoreSkillsFromDraft() {
+            if (!draftData.skills) return;
+            Object.keys(draftData.skills).forEach(skill => {
+                const item = document.querySelector(`[data-skill="${CSS.escape(skill)}"]`);
+                if (item) {
+                    item.classList.add('selected');
+                    const input = item.querySelector('[data-skill-input]');
+                    if (input) input.value = draftData.skills[skill] || '';
+                }
+            });
         }
 
         function toggleSkill(skillName) {
@@ -1200,9 +1275,19 @@
                 clearTimeout(saveTimer);
                 savedLabel.textContent = '';
                 saveTimer = setTimeout(() => {
-                    db.ref('dailyNotes').set(textarea.value);
+                    db.ref('dailyNotes/' + selectedEntryDate).set(textarea.value);
                     savedLabel.textContent = 'Saved';
                 }, 600);
+            });
+        }
+
+        function loadDailyNotesForDate(date) {
+            const textarea = document.getElementById('dailyNotesText');
+            const savedLabel = document.getElementById('dailyNotesSaved');
+            savedLabel.textContent = '';
+            textarea.value = '';
+            db.ref('dailyNotes/' + date).once('value').then(snapshot => {
+                textarea.value = snapshot.val() || '';
             });
         }
 
@@ -1245,15 +1330,6 @@
             document.getElementById('diaryEntry').addEventListener('input', function() {
                 draftData['diary_entry'] = this.value;
                 saveDraft();
-            });
-
-            document.querySelectorAll('[data-skill-input]').forEach(input => {
-                input.addEventListener('input', function() {
-                    const skill = this.dataset.skillInput;
-                    if (!draftData.skills) draftData.skills = {};
-                    draftData.skills[skill] = this.value;
-                    saveDraft();
-                });
             });
 
             ['feelings', 'positive', 'gratitude'].forEach(id => {
@@ -1309,7 +1385,7 @@
         }
 
         function saveDraft() {
-            db.ref('draft').set(draftData);
+            db.ref('drafts/' + selectedEntryDate).set(draftData);
         }
 
         function switchTab(tabName) {
@@ -1335,7 +1411,7 @@
 
             const entry = {
                 id: Date.now(),
-                date: getEasternDate(),
+                date: selectedEntryDate,
                 time: getEasternTime(),
                 mood: draftData.mood || '',
                 meds: draftData.meds,
@@ -1357,32 +1433,12 @@
             entries.push(entry);
             saveToStorage();
 
-            db.ref('draft').remove();
-            draftData = {};
-            
-            document.getElementById('screeningForm').reset();
-            document.getElementById('diaryEntry').value = '';
-            document.getElementById('feelings').value = '';
-            document.getElementById('positive').value = '';
-            document.getElementById('gratitude').value = '';
-            document.querySelectorAll('.option-button.selected').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            document.querySelectorAll('.mood-button.selected').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                cb.checked = false;
-            });
-            document.querySelectorAll('.skill-item.selected').forEach(item => {
-                item.classList.remove('selected');
-            });
-            document.getElementById('sleepValue').textContent = '5';
-            document.getElementById('sleep').value = '5';
-            
-            alert('Entry completed and saved!');
-            switchTab('view');
-            renderEntries();
+            const notice = document.createElement('div');
+            notice.textContent = 'Entry saved!';
+            notice.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a1a;color:#fff;padding:0.6rem 1.2rem;border-radius:8px;font-size:14px;z-index:9999;opacity:1;transition:opacity 0.5s;';
+            document.body.appendChild(notice);
+            setTimeout(() => { notice.style.opacity = '0'; setTimeout(() => notice.remove(), 500); }, 2000);
+
             renderMoodMosaic();
             renderInsights();
         }
@@ -1465,6 +1521,34 @@
             `).join('');
         }
 
+        function renderEntries() {
+            const container = document.getElementById('entriesList');
+            if (!container) return;
+            if (entries.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No entries yet.</p></div>';
+                return;
+            }
+            const sorted = [...entries].sort((a, b) => new Date(`${b.date} ${b.time}`) - new Date(`${a.date} ${a.time}`));
+            container.innerHTML = sorted.map(entry => `
+                <div class="entry-card" onclick="showEntryDetail(${entry.id})">
+                    <div class="entry-header">
+                        <div class="entry-date">${formatDate(entry.date)} at ${entry.time}</div>
+                        ${entry.mood ? `<div style="width:20px;height:20px;border-radius:50%;background-color:${getMoodColor(entry.mood)};" title="${entry.mood}"></div>` : ''}
+                    </div>
+                    <div style="font-size:14px;color:var(--color-text-secondary);margin-bottom:0.75rem;line-height:1.5;">
+                        ${entry.diary_entry ? entry.diary_entry.substring(0, 100) + (entry.diary_entry.length > 100 ? '...' : '') : '(no diary entry)'}
+                    </div>
+                    <div class="entry-meta">
+                        <div class="meta-item"><div class="meta-label">Depression</div><div class="meta-value">${entry.depression}/5</div></div>
+                        <div class="meta-item"><div class="meta-label">Anxiety</div><div class="meta-value">${entry.anxiety}/5</div></div>
+                        <div class="meta-item"><div class="meta-label">S.I.</div><div class="meta-value">${entry.suicidal_ideation}/5</div></div>
+                        <div class="meta-item"><div class="meta-label">Sleep</div><div class="meta-value">${entry.sleep}/10</div></div>
+                        <div class="meta-item"><div class="meta-label">Meals</div><div class="meta-value">${entry.meals}</div></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function renderMoodMosaic() {
             const mosaic = document.getElementById('moodMosaic');
             
@@ -1477,7 +1561,9 @@
 
             mosaic.innerHTML = sorted.map(entry => {
                 const color = entry.mood ? getMoodColor(entry.mood) : '#e0e0e0';
-                return `<div class="mosaic-tile" style="background-color: ${color};" title="${entry.mood || 'No mood'} - ${formatDate(entry.date)}">${formatDate(entry.date).substring(0, 3)}</div>`;
+                const [y, m, d] = entry.date.split('-');
+                const tileDate = `${m}/${d}/${y.slice(2)}`;
+                return `<div class="mosaic-tile" style="background-color: ${color};" title="${entry.mood || 'No mood'} - ${formatDate(entry.date)}" onclick="showEntryDetail(${entry.id})">${tileDate}</div>`;
             }).join('');
         }
 
@@ -1575,7 +1661,9 @@
                     <div class="detail-content">${entry.gratitude}</div>
                 </div>
                 ` : ''}
-                <button class="btn-primary" onclick="deleteEntry(${entry.id})">Delete entry</button>
+                <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+                    <button class="btn-secondary" onclick="deleteEntry(${entry.id})">Delete entry</button>
+                </div>
             `;
 
             modal.classList.add('active');
