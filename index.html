@@ -72,28 +72,88 @@
             margin-right: 0.5rem;
         }
 
-        .mood-button {
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
-            min-height: 32px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            padding: 0;
-            flex-shrink: 0;
-            box-sizing: border-box;
+        .mood-dropdown {
+            position: relative;
+        }
+
+        .mood-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.75rem;
+            border: 1.5px solid var(--color-border-secondary);
+            border-radius: var(--border-radius-md);
+            background: var(--color-background-primary);
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.15);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-text-primary);
+            min-width: 130px;
+            justify-content: space-between;
         }
 
-        .mood-button:hover {
-            transform: scale(1.1);
+        .mood-trigger:hover {
+            border-color: var(--color-border-primary);
         }
 
-        .mood-button.selected {
-            border-color: var(--color-text-primary);
-            box-shadow: 0 0 0 2px var(--color-background-primary);
+        .mood-trigger-swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 1px solid rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        .mood-trigger-arrow {
+            font-size: 10px;
+            color: var(--color-text-secondary);
+        }
+
+        .mood-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: var(--color-background-primary);
+            border: 1.5px solid var(--color-border-secondary);
+            border-radius: var(--border-radius-md);
+            padding: 0.4rem;
+            z-index: 100;
+            min-width: 160px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .mood-menu.open {
+            display: block;
+        }
+
+        .mood-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.45rem 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            width: 100%;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: none;
+            color: var(--color-text-primary);
+            transition: opacity 0.15s ease;
+        }
+
+        .mood-option:hover {
+            opacity: 0.8;
+        }
+
+        .mood-option-swatch {
+            width: 100%;
+            height: 100%;
+            border-radius: 3px;
         }
 
         .tabs {
@@ -621,8 +681,15 @@
     <div class="container">
         <div class="header">
             <h1>DBT Diary</h1>
-            <div class="mood-picker" id="moodPicker">
-                <div class="mood-label">Today's mood</div>
+            <div class="mood-dropdown" id="moodDropdown">
+                <button type="button" class="mood-trigger" id="moodTrigger">
+                    <span style="display:flex;align-items:center;gap:0.5rem;">
+                        <span class="mood-trigger-swatch" id="moodTriggerSwatch" style="display:none;"></span>
+                        <span id="moodTriggerLabel">TODAY'S MOOD</span>
+                    </span>
+                    <span class="mood-trigger-arrow">▼</span>
+                </button>
+                <div class="mood-menu" id="moodMenu"></div>
             </div>
         </div>
 
@@ -636,11 +703,12 @@
 
         <!-- New Entry Tab -->
         <div id="entry" class="tab-content active">
-            <div style="margin-bottom: 1.5rem;">
+            <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
                 <p style="font-size: 14px; color: var(--color-text-secondary);">
                     <span class="live-indicator"></span>
                     Updates save automatically as you make changes
                 </p>
+                <div id="entryDateDisplay" style="font-size: 14px; font-weight: 500; color: var(--color-text-primary);"></div>
             </div>
 
             <!-- Step 1: Screening Questionnaire -->
@@ -902,7 +970,21 @@
             'sib_urges', 'sib_carried_out', 'tib', 'sleep', 'meals'
         ];
 
+        function getEasternDate() {
+            return new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' }); // YYYY-MM-DD
+        }
+
+        function getEasternTime() {
+            return new Date().toLocaleTimeString('en-GB', { timeZone: 'America/New_York', hour12: false }); // HH:MM:SS
+        }
+
         function init() {
+            const etDate = new Date().toLocaleDateString('en-US', {
+                timeZone: 'America/New_York',
+                weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+            });
+            document.getElementById('entryDateDisplay').textContent = etDate;
+
             setupMoodPicker();
             setupEventListeners();
             setupDailyNotes();
@@ -924,10 +1006,7 @@
                 draftData = snapshot.val() || {};
                 restoreDraftUI();
                 renderSkillsList();
-                if (draftData.mood) {
-                    const moodBtn = document.querySelector(`[data-mood="${draftData.mood}"]`);
-                    if (moodBtn) moodBtn.classList.add('selected');
-                }
+                if (draftData.mood) updateMoodTrigger(draftData.mood);
             });
 
             // Daily notes: real-time, but skip update if textarea is focused
@@ -940,33 +1019,48 @@
         }
 
         function setupMoodPicker() {
-            const moodPicker = document.getElementById('moodPicker');
+            const menu = document.getElementById('moodMenu');
+            const trigger = document.getElementById('moodTrigger');
+
             moods.forEach((mood) => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = 'mood-button';
+                btn.className = 'mood-option';
                 btn.style.backgroundColor = mood.color;
-                btn.title = mood.name;
                 btn.dataset.mood = mood.name;
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
+                btn.textContent = mood.name;
+                btn.addEventListener('click', () => {
                     selectMood(mood.name);
+                    menu.classList.remove('open');
                 });
-                moodPicker.appendChild(btn);
+                menu.appendChild(btn);
             });
-            
-            if (draftData.mood) {
-                const moodBtn = document.querySelector(`[data-mood="${draftData.mood}"]`);
-                if (moodBtn) moodBtn.classList.add('selected');
-            }
+
+            trigger.addEventListener('click', () => {
+                menu.classList.toggle('open');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!document.getElementById('moodDropdown').contains(e.target)) {
+                    menu.classList.remove('open');
+                }
+            });
+
+            if (draftData.mood) updateMoodTrigger(draftData.mood);
+        }
+
+        function updateMoodTrigger(moodName) {
+            const mood = moods.find(m => m.name === moodName);
+            if (!mood) return;
+            document.getElementById('moodTriggerLabel').textContent = moodName;
+            const swatch = document.getElementById('moodTriggerSwatch');
+            swatch.style.backgroundColor = mood.color;
+            swatch.style.display = 'inline-block';
         }
 
         function selectMood(moodName) {
-            document.querySelectorAll('.mood-button').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            document.querySelector(`[data-mood="${moodName}"]`).classList.add('selected');
             draftData.mood = moodName;
+            updateMoodTrigger(moodName);
             saveDraft();
         }
 
@@ -1153,8 +1247,8 @@
 
             const entry = {
                 id: Date.now(),
-                date: new Date().toISOString().split('T')[0],
-                time: new Date().toTimeString().split(' ')[0],
+                date: getEasternDate(),
+                time: getEasternTime(),
                 mood: draftData.mood || '',
                 meds: draftData.meds,
                 depression: parseInt(draftData.depression),
