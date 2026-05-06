@@ -964,7 +964,7 @@
 
                     <!-- Q9: Meals -->
                     <div class="form-group">
-                        <div class="question-number">Question 9 of 9</div>
+                        <div class="question-number">Question 9 of 10</div>
                         <label class="question-label">Meals eaten today</label>
                         <div class="meal-checklist" id="mealChecklist">
                             <div class="meal-checkbox">
@@ -993,6 +993,17 @@
                             </div>
                         </div>
                         <div class="save-notice">Checked meals save automatically</div>
+                    </div>
+
+                    <!-- Q10: Exercise -->
+                    <div class="form-group">
+                        <div class="question-number">Question 10 of 10</div>
+                        <label class="question-label">Exercise today?</label>
+                        <div class="button-options">
+                            <button type="button" class="option-button" data-field="exercise" data-value="yes">Yes</button>
+                            <button type="button" class="option-button" data-field="exercise" data-value="active rest">Active rest</button>
+                            <button type="button" class="option-button" data-field="exercise" data-value="no">No</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -1052,6 +1063,7 @@
 
         <!-- Mood History Tab -->
         <div id="mood-history" class="tab-content">
+            <div id="moodKey" style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.5rem 1rem;margin-bottom:1rem;padding:0.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);"></div>
             <div class="mood-mosaic" id="moodMosaic"></div>
         </div>
 
@@ -1124,8 +1136,8 @@
         ];
 
         const screeningFields = [
-            'meds', 'depression', 'anxiety', 'suicidal_ideation', 
-            'sib_urges', 'sib_carried_out', 'tib', 'sleep', 'meals'
+            'meds', 'depression', 'anxiety', 'suicidal_ideation',
+            'sib_urges', 'sib_carried_out', 'tib', 'sleep', 'meals', 'exercise'
         ];
 
         function getEasternDate() {
@@ -1254,6 +1266,7 @@
             const savedStep = parseInt(localStorage.getItem('wizardStep') || '0', 10);
             showWizardStep(savedStep);
             setupMoodPicker();
+            renderMoodKey();
             setupEventListeners();
             setupDailyNotes();
             renderSkillsList();
@@ -1535,6 +1548,7 @@
                 tib: draftData.tib,
                 sleep: parseInt(draftData.sleep),
                 meals: parseInt(draftData.meals),
+                exercise: draftData.exercise || '',
                 diary_entry: draftData.diary_entry || '',
                 skills: skillsArray,
                 feelings: draftData.feelings || '',
@@ -1685,6 +1699,16 @@
             }).join('');
         }
 
+        function renderMoodKey() {
+            const key = document.getElementById('moodKey');
+            key.innerHTML = moods.map(m => `
+                <div style="display:flex;align-items:center;gap:0.4rem;font-size:13px;">
+                    <div style="width:14px;height:14px;border-radius:3px;background:${m.color};border:1px solid rgba(0,0,0,0.12);flex-shrink:0;"></div>
+                    <span>${m.name}</span>
+                </div>
+            `).join('');
+        }
+
         function getMoodColor(moodName) {
             const mood = moods.find(m => m.name === moodName);
             return mood ? mood.color : '#e0e0e0';
@@ -1747,6 +1771,12 @@
                     <div class="detail-label">Meals eaten</div>
                     <div class="detail-content">${entry.meals}</div>
                 </div>
+                ${entry.exercise ? `
+                <div class="detail-row">
+                    <div class="detail-label">Exercise</div>
+                    <div class="detail-content">${capitalizeFirst(entry.exercise)}</div>
+                </div>
+                ` : ''}
                 ${entry.diary_entry ? `
                 <div class="detail-row">
                     <div class="detail-label">Daily diary</div>
