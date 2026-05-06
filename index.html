@@ -48,13 +48,13 @@
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 1.25rem 1rem;
         }
 
         .header {
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             border-bottom: 1px solid var(--color-border-tertiary);
-            padding-bottom: 1rem;
+            padding-bottom: 0.75rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -166,13 +166,13 @@
         .tabs {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
             border-bottom: 1px solid var(--color-border-tertiary);
         }
 
         .tab-button {
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1rem;
             border: none;
             background: transparent;
             color: var(--color-text-secondary);
@@ -204,19 +204,21 @@
         .form-section {
             background: var(--color-background-secondary);
             border-radius: var(--border-radius-lg);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
             transition: background 0.3s ease;
         }
 
         .step-header {
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 700;
             color: var(--color-text-primary);
+            text-transform: uppercase;
+            text-align: center;
         }
 
         .form-group {
-            margin-bottom: 2rem;
+            margin-bottom: 1.25rem;
         }
 
         .form-group:last-child {
@@ -225,9 +227,9 @@
 
         .question-label {
             display: block;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             color: var(--color-text-primary);
         }
 
@@ -307,14 +309,14 @@
         }
 
         textarea {
-            min-height: 100px;
+            min-height: 75px;
             resize: vertical;
         }
 
         .text-boxes-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 0.75rem;
         }
 
         .text-box-item {
@@ -598,19 +600,66 @@
             font-style: italic;
         }
 
+        .wizard-step {
+            display: none;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        .step-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-border-secondary);
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+
+        .step-dot.active {
+            background: var(--color-text-primary);
+        }
+
+        .step-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            flex: 1;
+        }
+
         .section-card {
             background: var(--color-background-primary);
             border: 1px solid var(--color-border-tertiary);
             border-radius: var(--border-radius-lg);
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .section-title {
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 700;
             margin-bottom: 1rem;
             color: var(--color-text-primary);
+            text-transform: uppercase;
+            text-align: center;
         }
 
         .skills-list {
@@ -783,7 +832,7 @@
 
         <!-- New Entry Tab -->
         <div id="entry" class="tab-content active">
-            <div style="margin-bottom: 1.5rem; margin-top: -1rem;">
+            <div style="margin-bottom: 0.75rem; margin-top: -0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%; position: relative;">
                     <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size:22px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8592;</button>
                     <div id="entryDateDisplay" style="flex:1; cursor:pointer;" title="Click to pick a date"></div>
@@ -792,11 +841,20 @@
                 </div>
             </div>
 
-            <!-- Step 1: Screening Questionnaire -->
+            <!-- Step dots -->
+            <div class="step-dots">
+                <div class="step-dot active" onclick="showWizardStep(0)"></div>
+                <div class="step-dot" onclick="showWizardStep(1)"></div>
+                <div class="step-dot" onclick="showWizardStep(2)"></div>
+                <div class="step-dot" onclick="showWizardStep(3)"></div>
+            </div>
+
+            <!-- Wizard Step 1: Daily check-in -->
+            <div class="wizard-step active">
             <div class="form-section" id="checkinSection">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+                <div style="position:relative; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;">
                     <div class="step-header" style="margin-bottom:0;">Daily check-in</div>
-                    <div class="mood-dropdown" id="moodDropdown">
+                    <div class="mood-dropdown" id="moodDropdown" style="position:absolute; right:0;">
                         <button type="button" class="mood-trigger" id="moodTrigger">
                             <span style="display:flex;align-items:center;gap:0.5rem;">
                                 <span class="mood-trigger-swatch" id="moodTriggerSwatch" style="display:none;"></span>
@@ -938,23 +996,27 @@
                     </div>
                 </form>
             </div>
+            </div><!-- end wizard-step 1 -->
 
-            <!-- Section 2: Daily Diary -->
+            <!-- Wizard Step 2: Daily Diary -->
+            <div class="wizard-step">
             <div class="section-card">
                 <div class="section-title">Daily diary entry</div>
-                <textarea id="diaryEntry" placeholder="What happened today? How did you handle it? Updates save as you type..."></textarea>
-                <div class="save-notice">Saves automatically</div>
+                <textarea id="diaryEntry" placeholder="What happened today? How did you handle it? Updates save as you type..." style="min-height: 400px;"></textarea>
             </div>
+            </div><!-- end wizard-step 2 -->
 
-            <!-- Section 3: Skills Used -->
+            <!-- Wizard Step 3: Skills Used -->
+            <div class="wizard-step">
             <div class="section-card">
                 <div class="section-title">Skills used today</div>
                 <div class="skills-list" id="skillsList">
                 </div>
-                <div class="save-notice">Selections save automatically</div>
             </div>
+            </div><!-- end wizard-step 3 -->
 
-            <!-- Section 4: Reflections -->
+            <!-- Wizard Step 4: Reflections -->
+            <div class="wizard-step">
             <div class="section-card">
                 <div class="section-title">Reflections</div>
                 <div class="text-boxes-grid">
@@ -962,23 +1024,23 @@
                         <label class="text-box-label">What feelings came up today?</label>
                         <textarea id="feelings" placeholder="Describe the emotions you experienced..."></textarea>
                     </div>
-
                     <div class="text-box-item">
                         <label class="text-box-label">Positive experiences</label>
                         <textarea id="positive" placeholder="What went well? Any moments of joy or peace?"></textarea>
                     </div>
-
                     <div class="text-box-item">
                         <label class="text-box-label">Gratitude</label>
                         <textarea id="gratitude" placeholder="What are you grateful for today?"></textarea>
                     </div>
                 </div>
-                <div class="save-notice">All reflections save automatically</div>
             </div>
+            </div><!-- end wizard-step 4 -->
 
-            <div class="button-group" style="justify-content: center; margin-top: 2rem;">
-                <button type="button" class="btn-primary" onclick="completeEntry()">Complete entry</button>
-                <button type="button" class="btn-secondary" onclick="resetEntry()">Reset entry</button>
+            <!-- Step navigation -->
+            <div class="step-nav">
+                <button type="button" id="stepBack" class="btn-secondary" onclick="wizardBack()" style="visibility:hidden;">← Back</button>
+                <span class="step-label" id="stepLabel">Daily check-in</span>
+                <button type="button" id="stepNext" class="btn-primary" onclick="wizardNext()">Next →</button>
             </div>
         </div>
 
@@ -1132,8 +1194,38 @@
                 selectedEntryDate = next;
                 setDateDisplay(selectedEntryDate);
                 document.getElementById('dateNext').style.opacity = selectedEntryDate === today ? '0.3' : '1';
+                showWizardStep(0);
                 loadDraftForDate(selectedEntryDate);
             }
+        }
+
+        const wizardStepLabels = ['Daily check-in', 'Daily diary', 'Skills used', 'Reflections'];
+        let currentWizardStep = 0;
+
+        function showWizardStep(n) {
+            const steps = document.querySelectorAll('.wizard-step');
+            const dots = document.querySelectorAll('.step-dot');
+            steps.forEach((el, i) => el.classList.toggle('active', i === n));
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === n));
+            document.getElementById('stepBack').style.visibility = n === 0 ? 'hidden' : 'visible';
+            const isLast = n === steps.length - 1;
+            document.getElementById('stepNext').textContent = isLast ? 'Complete entry' : 'Next →';
+            document.getElementById('stepLabel').textContent = wizardStepLabels[n];
+            currentWizardStep = n;
+            localStorage.setItem('wizardStep', n);
+        }
+
+        function wizardNext() {
+            const steps = document.querySelectorAll('.wizard-step');
+            if (currentWizardStep === steps.length - 1) {
+                completeEntry();
+            } else {
+                showWizardStep(currentWizardStep + 1);
+            }
+        }
+
+        function wizardBack() {
+            if (currentWizardStep > 0) showWizardStep(currentWizardStep - 1);
         }
 
         function init() {
@@ -1152,12 +1244,15 @@
                     selectedEntryDate = datePicker.value;
                     setDateDisplay(selectedEntryDate);
                     document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
+                    showWizardStep(0);
                     loadDraftForDate(selectedEntryDate);
                 }
             });
 
             document.getElementById('dailyNotesDate').textContent = formatEntryDate(selectedEntryDate);
 
+            const savedStep = parseInt(localStorage.getItem('wizardStep') || '0', 10);
+            showWizardStep(savedStep);
             setupMoodPicker();
             setupEventListeners();
             setupDailyNotes();
