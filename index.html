@@ -11,7 +11,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="DBT Diary">
     <meta name="theme-color" content="#7C3AED">
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
             --color-background-primary: #ffffff;
@@ -27,8 +26,17 @@
             --color-success: #22c55e;
             --border-radius-md: 8px;
             --border-radius-lg: 12px;
-            --font-mono: 'IBM Plex Mono', monospace;
-            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+            --font-sans: ui-monospace, 'SF Mono', Menlo, monospace;
+        }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        *, button, input, select, textarea {
+            font-family: ui-monospace, 'SF Mono', Menlo, monospace;
         }
 
         * {
@@ -39,6 +47,7 @@
 
         body {
             font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+            font-size: 11px;
             background: var(--color-background-tertiary);
             color: var(--color-text-primary);
             line-height: 1.6;
@@ -61,7 +70,7 @@
         }
 
         .header h1 {
-            font-size: 28px;
+            font-size: 11px;
             font-weight: 500;
         }
 
@@ -72,7 +81,7 @@
         }
 
         .mood-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--color-text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -92,7 +101,7 @@
             border-radius: var(--border-radius-md);
             background: var(--color-background-primary);
             cursor: pointer;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 500;
             color: var(--color-text-primary);
             white-space: nowrap;
@@ -141,7 +150,7 @@
             padding: 0.45rem 0.6rem;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 500;
             border: none;
             width: 100%;
@@ -177,7 +186,8 @@
             background: transparent;
             color: var(--color-text-secondary);
             cursor: pointer;
-            font-size: 14px;
+            font-size: 11px;
+            font-family: var(--font-sans);
             border-bottom: 3px solid transparent;
             transition: all 0.2s ease;
             text-transform: uppercase;
@@ -199,6 +209,7 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeSlideIn 0.18s ease;
         }
 
         .form-section {
@@ -210,7 +221,7 @@
         }
 
         .step-header {
-            font-size: 18px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--color-text-primary);
             text-transform: uppercase;
@@ -227,14 +238,14 @@
 
         .question-label {
             display: block;
-            font-size: 15px;
+            font-size: 11px;
             font-weight: 500;
             margin-bottom: 0.5rem;
             color: var(--color-text-primary);
         }
 
         .question-number {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--color-text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -254,7 +265,7 @@
             color: var(--color-text-primary);
             border-radius: var(--border-radius-md);
             cursor: pointer;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 500;
             transition: all 0.2s ease;
         }
@@ -283,7 +294,7 @@
 
         .slider-value {
             text-align: center;
-            font-size: 18px;
+            font-size: 11px;
             font-weight: 500;
         }
 
@@ -294,7 +305,7 @@
             padding: 0.75rem;
             border: 1.5px solid var(--color-border-secondary);
             border-radius: var(--border-radius-md);
-            font-size: 14px;
+            font-size: 11px;
             font-family: inherit;
             background: var(--color-background-primary);
             color: var(--color-text-primary);
@@ -325,7 +336,7 @@
         }
 
         .text-box-label {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 500;
             margin-bottom: 0.5rem;
             color: var(--color-text-primary);
@@ -371,7 +382,7 @@
             margin: 0;
             cursor: pointer;
             font-weight: 400;
-            font-size: 14px;
+            font-size: 11px;
         }
 
         .button-group {
@@ -385,7 +396,7 @@
             padding: 0.75rem 1.5rem;
             border: none;
             border-radius: var(--border-radius-md);
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -412,21 +423,27 @@
 
         .entries-list {
             display: grid;
-            gap: 1rem;
+            gap: 0;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--color-border-tertiary);
         }
 
         .entry-card {
             background: var(--color-background-secondary);
-            border: 1px solid var(--color-border-tertiary);
-            border-radius: var(--border-radius-lg);
-            padding: 1.5rem;
+            border: none;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding: 0.75rem 1rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: filter 0.15s ease;
+        }
+
+        .entry-card:last-child {
+            border-bottom: none;
         }
 
         .entry-card:hover {
-            border-color: var(--color-border-primary);
-            background: var(--color-background-primary);
+            filter: brightness(0.95);
         }
 
         .entry-header {
@@ -437,7 +454,7 @@
         }
 
         .entry-date {
-            font-size: 14px;
+            font-size: 11px;
             color: var(--color-text-secondary);
             font-family: var(--font-mono);
         }
@@ -446,7 +463,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 0.75rem;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--color-text-secondary);
             margin-top: 1rem;
         }
@@ -465,7 +482,7 @@
         }
 
         .meta-value {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 500;
             color: var(--color-text-primary);
         }
@@ -508,7 +525,7 @@
         }
 
         .modal-header {
-            font-size: 20px;
+            font-size: 11px;
             font-weight: 500;
             margin-bottom: 1.5rem;
             display: flex;
@@ -519,7 +536,7 @@
         .close-btn {
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 11px;
             cursor: pointer;
             color: var(--color-text-secondary);
             padding: 0;
@@ -540,7 +557,7 @@
         }
 
         .detail-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--color-text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -548,7 +565,7 @@
         }
 
         .detail-content {
-            font-size: 14px;
+            font-size: 11px;
             line-height: 1.6;
         }
 
@@ -567,14 +584,14 @@
         }
 
         .stat-number {
-            font-size: 28px;
+            font-size: 11px;
             font-weight: 500;
             line-height: 1;
             margin-bottom: 0.5rem;
         }
 
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--color-text-secondary);
         }
 
@@ -594,7 +611,7 @@
         }
 
         .save-notice {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--color-text-secondary);
             margin-top: 0.5rem;
             font-style: italic;
@@ -606,6 +623,7 @@
 
         .wizard-step.active {
             display: block;
+            animation: fadeSlideIn 0.18s ease;
         }
 
         .step-dots {
@@ -637,7 +655,7 @@
         }
 
         .step-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--color-text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -654,7 +672,7 @@
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 11px;
             font-weight: 700;
             margin-bottom: 1rem;
             color: var(--color-text-primary);
@@ -696,7 +714,7 @@
             padding: 0.5rem;
             border: 1px solid var(--color-border-tertiary);
             border-radius: var(--border-radius-md);
-            font-size: 13px;
+            font-size: 11px;
             font-family: inherit;
             background: var(--color-background-secondary);
             color: var(--color-text-primary);
@@ -738,7 +756,7 @@
             }
 
             .header h1 {
-                font-size: 22px;
+                font-size: 11px;
             }
 
             /* Tabs: scrollable single row */
@@ -766,14 +784,14 @@
             }
 
             .step-header {
-                font-size: 16px;
+                font-size: 11px;
             }
 
             /* Prevent iOS zoom on inputs */
             input[type="text"],
             input[type="number"],
             textarea {
-                font-size: 16px;
+                font-size: 11px;
             }
 
             .button-group {
@@ -797,7 +815,7 @@
 
             /* Entry tab: stack date below the autosave notice */
             #entryDateDisplay {
-                font-size: 13px;
+                font-size: 11px;
             }
 
             .entry-meta {
@@ -811,7 +829,7 @@
         <div class="header">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <img src="icon.svg" alt="DBT Diary" style="height: 48px; width: 48px; border-radius: 12px;">
-                <span style="font-size: 22px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">DBT Diary</span>
+                <span style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">DBT Diary</span>
             </div>
         </div>
 
@@ -827,10 +845,10 @@
         <div id="entry" class="tab-content active">
             <div style="margin-bottom: 0.75rem; margin-top: -0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%; position: relative;">
-                    <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size:22px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8592;</button>
+                    <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size: 11px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8592;</button>
                     <div id="entryDateDisplay" style="flex:1; cursor:pointer;" title="Click to pick a date"></div>
                     <input type="date" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;" />
-                    <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size:22px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8594;</button>
+                    <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size: 11px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8594;</button>
                 </div>
             </div>
 
@@ -1068,9 +1086,9 @@
 
         <div id="daily-notes" class="tab-content">
             <div class="form-section">
-                <div style="font-size: 16px; font-weight: 500; margin-bottom: 1rem; color: var(--color-text-primary);" id="dailyNotesDate"></div>
-                <textarea id="dailyNotesText" placeholder="Scribble anything here..." style="min-height: 400px; font-size: 15px;"></textarea>
-                <div style="margin-top: 0.75rem; font-size: 12px; color: var(--color-text-tertiary);" id="dailyNotesSaved"></div>
+                <div style="font-size: 11px; font-weight: 500; margin-bottom: 1rem; color: var(--color-text-primary);" id="dailyNotesDate"></div>
+                <textarea id="dailyNotesText" placeholder="Scribble anything here..." style="min-height: 400px; font-size: 11px;"></textarea>
+                <div style="margin-top: 0.75rem; font-size: 11px; color: var(--color-text-tertiary);" id="dailyNotesSaved"></div>
             </div>
         </div>
     </div>
@@ -1180,8 +1198,11 @@
 
         function loadDraftForDate(date) {
             clearFormUI();
+            const cachedMood = localStorage.getItem('mood_' + date);
+            if (cachedMood) updateMoodTrigger(cachedMood);
             db.ref('drafts/' + date).once('value').then(snapshot => {
                 draftData = snapshot.val() || {};
+                if (draftData.mood) localStorage.setItem('mood_' + date, draftData.mood);
                 restoreDraftUI();
                 restoreSkillsFromDraft();
                 if (draftData.mood) updateMoodTrigger(draftData.mood);
@@ -1197,6 +1218,7 @@
             const today = getEasternDate();
             if (next <= today) {
                 selectedEntryDate = next;
+                localStorage.setItem('selectedEntryDate', selectedEntryDate);
                 setDateDisplay(selectedEntryDate);
                 document.getElementById('dateNext').style.opacity = selectedEntryDate === today ? '0.3' : '1';
                 showWizardStep(0);
@@ -1234,7 +1256,9 @@
         }
 
         function init() {
-            selectedEntryDate = getEasternDate();
+            const savedDate = localStorage.getItem('selectedEntryDate');
+            const today = getEasternDate();
+            selectedEntryDate = (savedDate && savedDate <= today) ? savedDate : today;
             setDateDisplay(selectedEntryDate);
             document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
             document.getElementById('datePrev').addEventListener('click', () => shiftEntryDate(-1));
@@ -1247,6 +1271,7 @@
             datePicker.addEventListener('change', () => {
                 if (datePicker.value && datePicker.value <= getEasternDate()) {
                     selectedEntryDate = datePicker.value;
+                    localStorage.setItem('selectedEntryDate', selectedEntryDate);
                     setDateDisplay(selectedEntryDate);
                     document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
                     showWizardStep(0);
@@ -1280,6 +1305,7 @@
             // Draft: load for today's date on startup
             db.ref('drafts/' + selectedEntryDate).once('value').then(snapshot => {
                 draftData = snapshot.val() || {};
+                if (draftData.mood) localStorage.setItem('mood_' + selectedEntryDate, draftData.mood);
                 restoreDraftUI();
                 restoreSkillsFromDraft();
                 if (draftData.mood) updateMoodTrigger(draftData.mood);
@@ -1317,7 +1343,8 @@
                 }
             });
 
-            if (draftData.mood) updateMoodTrigger(draftData.mood);
+            const cachedMood = localStorage.getItem('mood_' + selectedEntryDate);
+            if (cachedMood) updateMoodTrigger(cachedMood);
         }
 
         function updateMoodTrigger(moodName) {
@@ -1333,6 +1360,7 @@
 
         function selectMood(moodName) {
             draftData.mood = moodName;
+            localStorage.setItem('mood_' + selectedEntryDate, moodName);
             updateMoodTrigger(moodName);
             saveDraft();
         }
@@ -1461,8 +1489,8 @@
         }
 
         function updateMealCount() {
-            const checked = document.querySelectorAll('#mealChecklist input[type="checkbox"]:checked').length;
-            draftData['meals'] = checked.toString();
+            const checked = Array.from(document.querySelectorAll('#mealChecklist input[type="checkbox"]:checked')).map(cb => cb.value);
+            draftData['meals'] = checked.join(',');
         }
 
         function loadDraft() {
@@ -1491,12 +1519,23 @@
             }
 
             if (draftData['meals']) {
-                const mealsCount = parseInt(draftData['meals']);
-                document.querySelectorAll('#mealChecklist input[type="checkbox"]').forEach((cb, i) => {
-                    if (i < mealsCount) {
-                        cb.checked = true;
-                    }
+                const raw = draftData['meals'].toString();
+                let selectedMeals;
+                if (raw.startsWith('[')) {
+                    // Old JSON array format (transitional)
+                    try { selectedMeals = JSON.parse(raw); } catch(e) { selectedMeals = []; }
+                } else if (raw.includes(',') || Object.keys(mealLabels).includes(raw)) {
+                    // Current format: comma-separated meal names
+                    selectedMeals = raw.split(',').filter(Boolean);
+                } else {
+                    // Legacy: stored as a count, check first N boxes
+                    const count = parseInt(raw) || 0;
+                    selectedMeals = Array.from(document.querySelectorAll('#mealChecklist input[type="checkbox"]')).slice(0, count).map(cb => cb.value);
+                }
+                document.querySelectorAll('#mealChecklist input[type="checkbox"]').forEach(cb => {
+                    cb.checked = selectedMeals.includes(cb.value);
                 });
+                updateMealCount();
             }
 
             if (draftData['feelings']) document.getElementById('feelings').value = draftData['feelings'];
@@ -1543,7 +1582,7 @@
                 sib_carried_out: draftData.sib_carried_out,
                 tib: draftData.tib,
                 sleep: parseInt(draftData.sleep),
-                meals: parseInt(draftData.meals),
+                meals: Array.from(document.querySelectorAll('#mealChecklist input[type="checkbox"]:checked')).map(cb => cb.value).join(','),
                 exercise: draftData.exercise || '',
                 diary_entry: draftData.diary_entry || '',
                 skills: skillsArray,
@@ -1563,7 +1602,7 @@
 
             const notice = document.createElement('div');
             notice.textContent = 'Entry saved!';
-            notice.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a1a;color:#fff;padding:0.6rem 1.2rem;border-radius:8px;font-size:14px;z-index:9999;opacity:1;transition:opacity 0.5s;';
+            notice.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a1a;color:#fff;padding:0.6rem 1.2rem;border-radius:8px;font-size: 11px;z-index:9999;opacity:1;transition:opacity 0.5s;';
             document.body.appendChild(notice);
             setTimeout(() => { notice.style.opacity = '0'; setTimeout(() => notice.remove(), 500); }, 2000);
 
@@ -1606,51 +1645,6 @@
 
         function renderEntries() {
             const container = document.getElementById('entriesList');
-            
-            if (entries.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p>No entries yet. Start by creating a new entry.</p></div>';
-                return;
-            }
-
-            const sorted = [...entries].sort((a, b) => new Date(`${b.date} ${b.time}`) - new Date(`${a.date} ${a.time}`));
-
-            container.innerHTML = sorted.map(entry => `
-                <div class="entry-card" onclick="showEntryDetail(${entry.id})">
-                    <div class="entry-header">
-                        <div class="entry-date">${formatDate(entry.date)} at ${entry.time}</div>
-                        ${entry.mood ? `<div style="width: 20px; height: 20px; border-radius: 50%; background-color: ${getMoodColor(entry.mood)};" title="${entry.mood}"></div>` : ''}
-                    </div>
-                    <div style="font-size: 14px; color: var(--color-text-secondary); margin-bottom: 0.75rem; line-height: 1.5;">
-                        ${entry.diary_entry ? entry.diary_entry.substring(0, 100) + (entry.diary_entry.length > 100 ? '...' : '') : '(no diary entry)'}
-                    </div>
-                    <div class="entry-meta">
-                        <div class="meta-item">
-                            <div class="meta-label">Depression</div>
-                            <div class="meta-value">${entry.depression}/5</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-label">Anxiety</div>
-                            <div class="meta-value">${entry.anxiety}/5</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-label">S.I.</div>
-                            <div class="meta-value">${entry.suicidal_ideation}/5</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-label">Sleep</div>
-                            <div class="meta-value">${entry.sleep}/10</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-label">Meals</div>
-                            <div class="meta-value">${entry.meals}</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderEntries() {
-            const container = document.getElementById('entriesList');
             if (!container) return;
             if (entries.length === 0) {
                 container.innerHTML = '<div class="empty-state"><p>No entries yet.</p></div>';
@@ -1658,12 +1652,12 @@
             }
             const sorted = [...entries].sort((a, b) => new Date(`${b.date} ${b.time}`) - new Date(`${a.date} ${a.time}`));
             container.innerHTML = sorted.map(entry => `
-                <div class="entry-card" onclick="showEntryDetail(${entry.id})">
+                <div class="entry-card" onclick="showEntryDetail(${entry.id})" ${entry.mood ? `style="background:${getMoodColor(entry.mood)};border-color:${getMoodColor(entry.mood)};"` : ''}>
                     <div class="entry-header">
                         <div class="entry-date">${formatDate(entry.date)} at ${entry.time}</div>
-                        ${entry.mood ? `<div style="width:20px;height:20px;border-radius:50%;background-color:${getMoodColor(entry.mood)};" title="${entry.mood}"></div>` : ''}
+                        ${entry.mood ? `<span style="font-size: 11px;font-weight:500;">${entry.mood}</span>` : ''}
                     </div>
-                    <div style="font-size:14px;color:var(--color-text-secondary);margin-bottom:0.75rem;line-height:1.5;">
+                    <div style="font-size: 11px;color:var(--color-text-secondary);margin-bottom:0.75rem;line-height:1.5;">
                         ${entry.diary_entry ? entry.diary_entry.substring(0, 100) + (entry.diary_entry.length > 100 ? '...' : '') : '(no diary entry)'}
                     </div>
                     <div class="entry-meta">
@@ -1671,7 +1665,7 @@
                         <div class="meta-item"><div class="meta-label">Anxiety</div><div class="meta-value">${entry.anxiety}/5</div></div>
                         <div class="meta-item"><div class="meta-label">S.I.</div><div class="meta-value">${entry.suicidal_ideation}/5</div></div>
                         <div class="meta-item"><div class="meta-label">Sleep</div><div class="meta-value">${entry.sleep}/10</div></div>
-                        <div class="meta-item"><div class="meta-label">Meals</div><div class="meta-value">${entry.meals}</div></div>
+                        <div class="meta-item"><div class="meta-label">Meals</div><div class="meta-value">${mealCount(entry.meals)}</div></div>
                     </div>
                 </div>
             `).join('');
@@ -1709,7 +1703,7 @@
 
                 return `
                     <div style="margin-bottom:0.75rem;">
-                        <button type="button" onclick="toggleMosaicMonth('month-${key}')" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.75rem;background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;font-size:14px;font-weight:600;color:var(--color-text-primary);text-transform:uppercase;letter-spacing:0.5px;">
+                        <button type="button" onclick="toggleMosaicMonth('month-${key}')" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.75rem;background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;font-size: 11px;font-weight:600;color:var(--color-text-primary);text-transform:uppercase;letter-spacing:0.5px;">
                             <span>${label}</span>
                             <span id="month-${key}-arrow" style="font-size:11px;color:var(--color-text-secondary);">${isOpen ? '▲' : '▼'}</span>
                         </button>
@@ -1733,7 +1727,7 @@
         function renderMoodKey() {
             const key = document.getElementById('moodKey');
             key.innerHTML = moods.map(m => `
-                <div style="display:flex;align-items:center;gap:0.4rem;font-size:13px;">
+                <div style="display:flex;align-items:center;gap:0.4rem;font-size: 11px;">
                     <div style="width:14px;height:14px;border-radius:3px;background:${m.color};border:1px solid rgba(0,0,0,0.12);flex-shrink:0;"></div>
                     <span>${m.name}</span>
                 </div>
@@ -1800,7 +1794,7 @@
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Meals eaten</div>
-                    <div class="detail-content">${entry.meals}</div>
+                    <div class="detail-content">${formatMealNames(entry.meals)}</div>
                 </div>
                 ${entry.exercise ? `
                 <div class="detail-row">
@@ -1874,7 +1868,7 @@
             const avgAnxiety = (entries.reduce((sum, e) => sum + e.anxiety, 0) / entries.length).toFixed(1);
             const avgSI = (entries.reduce((sum, e) => sum + e.suicidal_ideation, 0) / entries.length).toFixed(1);
             const avgSleep = (entries.reduce((sum, e) => sum + e.sleep, 0) / entries.length).toFixed(1);
-            const avgMeals = (entries.reduce((sum, e) => sum + e.meals, 0) / entries.length).toFixed(1);
+            const avgMeals = (entries.reduce((sum, e) => sum + mealCount(e.meals), 0) / entries.length).toFixed(1);
 
             const sibCarriedOut = entries.filter(e => e.sib_carried_out === 'yes').length;
             const medsCount = entries.filter(e => e.meds === 'yes').length;
@@ -1920,15 +1914,15 @@
             let insightsHTML = '';
             
             if (avgSI > 2) {
-                insightsHTML += '<div style="background: var(--color-danger, #f87171); background-opacity: 0.2; padding: 1rem; border-radius: var(--border-radius-lg); margin-bottom: 1rem; border-left: 4px solid var(--color-danger, #f87171);"><div style="font-weight: 500; margin-bottom: 0.5rem;">Alert: Elevated S.I.</div><div style="font-size: 14px;">Your average suicidal ideation is above 2. Please reach out to a therapist or crisis line if needed.</div></div>';
+                insightsHTML += '<div style="background: var(--color-danger, #f87171); background-opacity: 0.2; padding: 1rem; border-radius: var(--border-radius-lg); margin-bottom: 1rem; border-left: 4px solid var(--color-danger, #f87171);"><div style="font-weight: 500; margin-bottom: 0.5rem;">Alert: Elevated S.I.</div><div style="font-size: 11px;">Your average suicidal ideation is above 2. Please reach out to a therapist or crisis line if needed.</div></div>';
             }
 
             if (sibCarriedOut > 0) {
-                insightsHTML += `<div style="background: var(--color-warning, #facc15); background-opacity: 0.2; padding: 1rem; border-radius: var(--border-radius-lg); margin-bottom: 1rem; border-left: 4px solid var(--color-warning, #facc15);"><div style="font-weight: 500; margin-bottom: 0.5rem;">Note: S.I.B. carried out</div><div style="font-size: 14px;">You've engaged in self-injurious behavior on ${sibCarriedOut} day${sibCarriedOut > 1 ? 's' : ''}. Consider reviewing your DBT skills.</div></div>`;
+                insightsHTML += `<div style="background: var(--color-warning, #facc15); background-opacity: 0.2; padding: 1rem; border-radius: var(--border-radius-lg); margin-bottom: 1rem; border-left: 4px solid var(--color-warning, #facc15);"><div style="font-weight: 500; margin-bottom: 0.5rem;">Note: S.I.B. carried out</div><div style="font-size: 11px;">You've engaged in self-injurious behavior on ${sibCarriedOut} day${sibCarriedOut > 1 ? 's' : ''}. Consider reviewing your DBT skills.</div></div>`;
             }
 
             insightsHTML += `
-                <h2 style="margin-bottom: 1rem; font-size: 18px; font-weight: 500;">Trends</h2>
+                <h2 style="margin-bottom: 1rem; font-size: 11px; font-weight: 500;">Trends</h2>
                 <div style="display: grid; gap: 1rem; margin-bottom: 2rem;">
                     <div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
@@ -1958,13 +1952,13 @@
             `;
 
             if (Object.keys(skillCounts).length > 0) {
-                insightsHTML += '<h2 style="margin-bottom: 1rem; font-size: 18px; font-weight: 500;">Most used skills</h2>';
+                insightsHTML += '<h2 style="margin-bottom: 1rem; font-size: 11px; font-weight: 500;">Most used skills</h2>';
                 insightsHTML += '<div style="display: grid; gap: 0.5rem;">';
                 Object.entries(skillCounts)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5)
                     .forEach(([skill, count]) => {
-                        insightsHTML += `<div style="font-size: 14px;">${skill}: <strong>${count}</strong> time${count > 1 ? 's' : ''}</div>`;
+                        insightsHTML += `<div style="font-size: 11px;">${skill}: <strong>${count}</strong> time${count > 1 ? 's' : ''}</div>`;
                     });
                 insightsHTML += '</div>';
             }
@@ -1979,6 +1973,25 @@
 
         function capitalizeFirst(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        const mealLabels = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack1: 'Snack 1', snack2: 'Snack 2', snack3: 'Snack 3' };
+
+        function formatMealNames(meals) {
+            if (!meals && meals !== 0) return 'None';
+            const str = meals.toString();
+            if (str === '' || str === '0') return 'None';
+            // Legacy: plain number
+            if (/^\d+$/.test(str)) return str + ' meal' + (parseInt(str) !== 1 ? 's' : '');
+            // New format: comma-separated keys
+            return str.split(',').filter(Boolean).map(m => mealLabels[m] || m).join(', ');
+        }
+
+        function mealCount(meals) {
+            if (!meals) return 0;
+            const str = meals.toString();
+            if (/^\d+$/.test(str)) return parseInt(str);
+            return str.split(',').filter(Boolean).length;
         }
 
         window.closeModal = closeModal;
