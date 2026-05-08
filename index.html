@@ -719,6 +719,10 @@
             background: var(--color-background-secondary);
             color: var(--color-text-primary);
             display: none;
+            resize: none;
+            overflow: hidden;
+            min-height: unset;
+            line-height: 1.5;
         }
 
         .skill-item.selected .skill-input {
@@ -1370,12 +1374,14 @@
             skillsList.innerHTML = skills.map((skill) => `
                 <div class="skill-item" data-skill="${skill}" onclick="toggleSkill('${skill}')">
                     <div class="skill-name">${skill}</div>
-                    <input type="text" class="skill-input" placeholder="Write something about this skill..." data-skill-input="${skill}" onclick="event.stopPropagation()">
+                    <textarea class="skill-input" placeholder="Write something about this skill..." data-skill-input="${skill}" onclick="event.stopPropagation()" rows="1"></textarea>
                 </div>
             `).join('');
 
             document.querySelectorAll('[data-skill-input]').forEach(input => {
                 input.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = this.scrollHeight + 'px';
                     const skill = this.dataset.skillInput;
                     if (!draftData.skills) draftData.skills = {};
                     draftData.skills[skill] = this.value;
@@ -1391,7 +1397,11 @@
                 if (item) {
                     item.classList.add('selected');
                     const input = item.querySelector('[data-skill-input]');
-                    if (input) input.value = draftData.skills[skill] || '';
+                    if (input) {
+                        input.value = draftData.skills[skill] || '';
+                        input.style.height = 'auto';
+                        input.style.height = input.scrollHeight + 'px';
+                    }
                 }
             });
         }
