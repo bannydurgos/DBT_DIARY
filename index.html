@@ -857,11 +857,11 @@
                 font-size: 11px;
             }
 
-            /* Prevent iOS zoom on inputs */
+            /* iOS zoom prevention — must be 16px minimum */
             input[type="text"],
             input[type="number"],
             textarea {
-                font-size: 11px;
+                font-size: 16px;
             }
 
             .button-group {
@@ -890,6 +890,52 @@
 
             .entry-meta {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* Check-in rows: allow label + buttons to wrap on very narrow screens */
+            #screeningForm > div > div {
+                flex-wrap: wrap;
+            }
+
+            /* Check-in section header: wrap mood picker below title if needed */
+            #checkinSection > div:first-child {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            /* Step dots: scroll horizontally if they overflow */
+            .step-dots {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                justify-content: flex-start;
+                padding-bottom: 2px;
+            }
+
+            .step-dots::-webkit-scrollbar {
+                display: none;
+            }
+
+            /* Wizard BACK/NEXT: switch from vertical side-tabs to horizontal bottom buttons */
+            .wizard-nav-row {
+                flex-wrap: wrap;
+                align-items: stretch !important;
+            }
+
+            .wizard-nav-row > div {
+                width: 100%;
+                order: 0;
+            }
+
+            #stepBack,
+            #stepNext {
+                writing-mode: horizontal-tb !important;
+                transform: none !important;
+                padding: 0.75rem 1rem !important;
+                flex: 1;
+                flex-shrink: 1 !important;
+                order: 1;
             }
         }
     </style>
@@ -925,7 +971,7 @@
                 <button type="button" class="step-dot" onclick="showWizardStep(3)">Reflections</button>
             </div>
 
-            <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div class="wizard-nav-row" style="display:flex;align-items:center;gap:0.75rem;">
             <button type="button" id="stepBack" class="btn-secondary" onclick="wizardBack()" style="visibility:hidden;flex-shrink:0;padding:0.6rem 0.5rem;writing-mode:vertical-lr;transform:rotate(180deg);">BACK</button>
             <div style="flex:1;min-width:0;">
 
