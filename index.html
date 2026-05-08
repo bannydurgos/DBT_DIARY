@@ -903,39 +903,19 @@
                 gap: 0.5rem;
             }
 
-            /* Step dots: scroll horizontally if they overflow */
-            .step-dots {
-                overflow-x: auto;
-                flex-wrap: nowrap;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                justify-content: flex-start;
-                padding-bottom: 2px;
-            }
-
-            .step-dots::-webkit-scrollbar {
-                display: none;
-            }
-
-            /* Wizard BACK/NEXT: switch from vertical side-tabs to horizontal bottom buttons */
-            .wizard-nav-row {
-                flex-wrap: wrap;
-                align-items: stretch !important;
-            }
-
-            .wizard-nav-row > div {
-                width: 100%;
-                order: 0;
-            }
-
+            /* Mobile: only show the check-in step, hide wizard nav */
+            .step-dots,
             #stepBack,
             #stepNext {
-                writing-mode: horizontal-tb !important;
-                transform: none !important;
-                padding: 0.75rem 1rem !important;
-                flex: 1;
-                flex-shrink: 1 !important;
-                order: 1;
+                display: none !important;
+            }
+
+            .wizard-step:not(:first-child) {
+                display: none !important;
+            }
+
+            .wizard-step:first-child {
+                display: block !important;
             }
         }
     </style>
