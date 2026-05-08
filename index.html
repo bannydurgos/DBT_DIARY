@@ -10,20 +10,20 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="DBT Diary">
-    <meta name="theme-color" content="#7C3AED">
+    <meta name="theme-color" content="#1A2E4A">
     <style>
         :root {
-            --color-background-primary: #ffffff;
-            --color-background-secondary: #f4f4f5;
-            --color-background-tertiary: #e8e8ea;
-            --color-text-primary: #1a1a1a;
-            --color-text-secondary: #6b6b6b;
-            --color-text-tertiary: #9a9a9a;
-            --color-border-primary: #a0a0a0;
-            --color-border-secondary: #c4c4c4;
-            --color-border-tertiary: #d8d8d8;
-            --color-info: #3b82f6;
-            --color-success: #22c55e;
+            --color-background-primary: #FEFCF8;
+            --color-background-secondary: #FAF7F0;
+            --color-background-tertiary: #F3EDE0;
+            --color-text-primary: #0D1520;
+            --color-text-secondary: #2E4460;
+            --color-text-tertiary: #5A7090;
+            --color-border-primary: #3E5870;
+            --color-border-secondary: #6A8499;
+            --color-border-tertiary: #A0B4C4;
+            --color-info: #1A4E7A;
+            --color-success: #1A5C2A;
             --border-radius-md: 8px;
             --border-radius-lg: 12px;
             --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
@@ -48,7 +48,15 @@
         body {
             font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
             font-size: 11px;
-            background: var(--color-background-tertiary);
+            background-color: var(--color-background-primary);
+            background-image:
+                linear-gradient(90deg, transparent 72px, rgba(196, 80, 80, 0.38) 72px, rgba(196, 80, 80, 0.38) 74px, transparent 74px),
+                repeating-linear-gradient(
+                    transparent 0px,
+                    transparent 31px,
+                    rgba(100, 148, 210, 0.28) 31px,
+                    rgba(100, 148, 210, 0.28) 32px
+                );
             color: var(--color-text-primary);
             line-height: 1.6;
             padding: 0;
@@ -61,9 +69,7 @@
         }
 
         .header {
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--color-border-tertiary);
-            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -172,12 +178,23 @@
             border-radius: 3px;
         }
 
+        .toolbar {
+            background: rgba(253, 250, 244, 0.82);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid var(--color-border-tertiary);
+            border-radius: var(--border-radius-lg);
+            padding: 0.75rem 1rem 0;
+            margin-bottom: 1.25rem;
+            text-align: center;
+        }
+
         .tabs {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            margin-bottom: 1.25rem;
-            border-bottom: 1px solid var(--color-border-tertiary);
+            border-bottom: none;
+            margin-bottom: 0;
         }
 
         .tab-button {
@@ -289,7 +306,40 @@
         }
 
         input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
             width: 100%;
+            height: 5px;
+            background: var(--color-border-secondary);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-text-primary);
+            cursor: pointer;
+            border: 2px solid var(--color-background-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-text-primary);
+            cursor: pointer;
+            border: 2px solid var(--color-background-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        input[type="range"]::-moz-range-track {
+            height: 5px;
+            background: var(--color-border-secondary);
+            border-radius: 3px;
         }
 
         .slider-value {
@@ -599,7 +649,7 @@
             display: inline-block;
             width: 8px;
             height: 8px;
-            background: #4ade80;
+            background: #4A7A9A;
             border-radius: 50%;
             margin-right: 0.5rem;
             animation: pulse 2s infinite;
@@ -630,20 +680,28 @@
             display: flex;
             gap: 6px;
             justify-content: center;
+            margin-top: 0;
             margin-bottom: 0.75rem;
         }
 
         .step-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--color-border-secondary);
-            transition: background 0.2s ease;
+            padding: 0.3rem 0.65rem;
+            border-radius: 20px;
+            background: var(--color-border-tertiary);
+            color: var(--color-text-tertiary);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            transition: background 0.2s ease, color 0.2s ease;
             cursor: pointer;
+            border: none;
+            white-space: nowrap;
         }
 
         .step-dot.active {
             background: var(--color-text-primary);
+            color: var(--color-background-primary);
         }
 
         .step-nav {
@@ -830,38 +888,40 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <img src="icon.svg" alt="DBT Diary" style="height: 48px; width: 48px; border-radius: 12px;">
-                <span style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">DBT Diary</span>
+        <div class="toolbar">
+            <div class="header">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <img src="icon.svg" alt="DBT Diary" style="height: 48px; width: 48px; border-radius: 12px;">
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">DBT Diary</span>
+                </div>
             </div>
-        </div>
 
-        <div class="tabs">
-            <button class="tab-button active" data-tab="entry">New entry</button>
-            <button class="tab-button" data-tab="view">View entries</button>
-            <button class="tab-button" data-tab="mood-history">Mood history</button>
-            <button class="tab-button" data-tab="insights">Insights</button>
-            <button class="tab-button" data-tab="daily-notes">Daily notes</button>
+            <div class="tabs">
+                <button class="tab-button active" data-tab="entry">New entry</button>
+                <button class="tab-button" data-tab="view">View entries</button>
+                <button class="tab-button" data-tab="mood-history">Mood history</button>
+                <button class="tab-button" data-tab="insights">Insights</button>
+                <button class="tab-button" data-tab="daily-notes">Daily notes</button>
+            </div>
         </div>
 
         <!-- New Entry Tab -->
         <div id="entry" class="tab-content active">
-            <div style="margin-bottom: 0.75rem; margin-top: -0.5rem;">
+            <div style="margin-bottom: 1.5rem; margin-top: -0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%; position: relative;">
-                    <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size: 11px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8592;</button>
+                    <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size: 18px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&lt;</button>
                     <div id="entryDateDisplay" style="flex:1; cursor:pointer;" title="Click to pick a date"></div>
                     <input type="date" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;" />
-                    <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size: 11px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&#8594;</button>
+                    <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size: 18px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&gt;</button>
                 </div>
             </div>
 
             <!-- Step dots -->
             <div class="step-dots">
-                <div class="step-dot active" onclick="showWizardStep(0)"></div>
-                <div class="step-dot" onclick="showWizardStep(1)"></div>
-                <div class="step-dot" onclick="showWizardStep(2)"></div>
-                <div class="step-dot" onclick="showWizardStep(3)"></div>
+                <button type="button" class="step-dot active" onclick="showWizardStep(0)">Check-in</button>
+                <button type="button" class="step-dot" onclick="showWizardStep(1)">Diary</button>
+                <button type="button" class="step-dot" onclick="showWizardStep(2)">Skills</button>
+                <button type="button" class="step-dot" onclick="showWizardStep(3)">Reflections</button>
             </div>
 
             <!-- Wizard Step 1: Daily check-in -->
@@ -1065,7 +1125,6 @@
             <!-- Step navigation -->
             <div class="step-nav">
                 <button type="button" id="stepBack" class="btn-secondary" onclick="wizardBack()" style="visibility:hidden;">← Back</button>
-                <span class="step-label" id="stepLabel">Daily check-in</span>
                 <button type="button" id="stepNext" class="btn-primary" onclick="wizardNext()">Next →</button>
             </div>
         </div>
@@ -1129,14 +1188,14 @@
         let selectedEntryDate = null;
 
         const moods = [
-            { name: 'Happy', color: '#FFE5CC' },
+            { name: 'Happy', color: '#FFF176' },
             { name: 'Sad', color: '#CCE5FF' },
-            { name: 'Angry', color: '#FFCCCC' },
+            { name: 'Angry', color: '#FFB3B3' },
             { name: 'Fearful', color: '#E5CCFF' },
-            { name: 'Surprised', color: '#FFFFCC' },
-            { name: 'Disgusted', color: '#CCFFCC' },
-            { name: 'Neutral', color: '#E8E8E8' },
-            { name: 'Calm', color: '#CCFFFF' }
+            { name: 'Surprised', color: '#FFD4A3' },
+            { name: 'Disgusted', color: '#B8C4A0' },
+            { name: 'Neutral', color: '#E8DFD0' },
+            { name: 'Calm', color: '#D4DCF0' }
         ];
 
         const skills = [
@@ -1170,12 +1229,12 @@
         }
 
         function setDateDisplay(dateStr) {
-            const text = formatEntryDate(dateStr);
+            const text = formatEntryDate(dateStr).toUpperCase().replace(/,/g, '');
             document.getElementById('entryDateDisplay').innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="-6 0 1012 110" style="display:block;overflow:visible;">
-                    <g transform="scale(1, 0.55)">
-                        <text x="0" y="118" textLength="1000" lengthAdjust="spacingAndGlyphs"
-                              font-family="'Arial Black','Impact',sans-serif"
+                <svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="-6 0 1012 55" style="display:block;overflow:visible;">
+                    <g transform="scale(1, 0.46)">
+                        <text x="0" y="118" textLength="1000" lengthAdjust="spacing"
+                              font-family="'Impact','Arial Narrow','Arial Black',sans-serif"
                               font-weight="900" font-size="88"
                               fill="var(--color-text-primary)">${text}</text>
                     </g>
@@ -1241,7 +1300,6 @@
             document.getElementById('stepBack').style.visibility = n === 0 ? 'hidden' : 'visible';
             const isLast = n === steps.length - 1;
             document.getElementById('stepNext').textContent = isLast ? 'Complete entry' : 'Next →';
-            document.getElementById('stepLabel').textContent = wizardStepLabels[n];
             currentWizardStep = n;
             localStorage.setItem('wizardStep', n);
         }
@@ -1295,6 +1353,8 @@
             setupDailyNotes();
             renderSkillsList();
             setupFirebaseListeners();
+            setTimeout(alignStepDotsToLine, 50);
+            window.addEventListener('resize', alignStepDotsToLine);
         }
 
         function setupFirebaseListeners() {
@@ -1475,8 +1535,10 @@
             document.getElementById('sleep').addEventListener('input', function() {
                 document.getElementById('sleepValue').textContent = this.value;
                 draftData['sleep'] = this.value;
+                updateSliderFill(this);
                 saveDraft();
             });
+            updateSliderFill(document.getElementById('sleep'));
 
             document.querySelectorAll('#mealChecklist input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -1520,8 +1582,10 @@
             });
 
             if (draftData['sleep']) {
-                document.getElementById('sleep').value = draftData['sleep'];
+                const sliderEl = document.getElementById('sleep');
+                sliderEl.value = draftData['sleep'];
                 document.getElementById('sleepValue').textContent = draftData['sleep'];
+                updateSliderFill(sliderEl);
             }
 
             if (draftData['diary_entry']) {
@@ -1568,6 +1632,32 @@
             if (tabName === 'view') renderEntries();
             if (tabName === 'mood-history') renderMoodMosaic();
             if (tabName === 'insights') renderInsights();
+            if (tabName === 'entry') alignStepDotsToLine();
+        }
+
+        function alignStepDotsToLine() {
+            const dateDisplay = document.getElementById('entryDateDisplay');
+            const stepDots = document.querySelector('.step-dots');
+            if (!dateDisplay || !stepDots) return;
+            const period = 32;
+
+            // Step 1: anchor background so a line falls on the date text baseline (bottom of element)
+            const dateRect = dateDisplay.getBoundingClientRect();
+            if (dateRect.height === 0) return;
+            const dateBaseline = Math.round(dateRect.bottom + window.scrollY);
+            const bgOffset = ((dateBaseline - 31) % period + period) % period;
+            document.body.style.backgroundPosition = `0 0, 0 ${bgOffset}px`;
+
+            // Step 2: nudge step-dots margin so their center lands between two lines
+            const dotsRect = stepDots.getBoundingClientRect();
+            if (dotsRect.height === 0) return;
+            const dotsCenterY = Math.round(dotsRect.top + window.scrollY + dotsRect.height / 2);
+            const firstMidpoint = bgOffset + 47;
+            const k = Math.round((dotsCenterY - firstMidpoint) / period);
+            const targetMidpoint = firstMidpoint + k * period;
+            const nudge = targetMidpoint - dotsCenterY;
+            const currentMargin = parseInt(stepDots.style.marginTop) || 0;
+            stepDots.style.marginTop = (currentMargin + nudge) + 'px';
         }
 
         function completeEntry() {
@@ -1612,12 +1702,24 @@
 
             const notice = document.createElement('div');
             notice.textContent = 'Entry saved!';
-            notice.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a1a;color:#fff;padding:0.6rem 1.2rem;border-radius:8px;font-size: 11px;z-index:9999;opacity:1;transition:opacity 0.5s;';
+            notice.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;background:#0D1520;color:#FDFAF4;padding:0.6rem 1.2rem;border-radius:8px;font-size: 11px;z-index:9999;opacity:1;transition:opacity 0.5s;';
             document.body.appendChild(notice);
             setTimeout(() => { notice.style.opacity = '0'; setTimeout(() => notice.remove(), 500); }, 2000);
 
             renderMoodMosaic();
             renderInsights();
+
+            // Switch to view entries and reset form to blank for today
+            db.ref('drafts/' + selectedEntryDate).remove();
+            switchTab('view');
+            const today = getEasternDate();
+            selectedEntryDate = today;
+            localStorage.setItem('selectedEntryDate', today);
+            localStorage.setItem('wizardStep', '0');
+            setDateDisplay(today);
+            document.getElementById('dateNext').style.opacity = '0.3';
+            clearFormUI();
+            showWizardStep(0);
         }
 
         function resetEntry() {
@@ -1845,6 +1947,7 @@
                 </div>
                 ` : ''}
                 <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+                    <button class="btn-primary" onclick="editEntry(${entry.id})">Edit entry</button>
                     <button class="btn-secondary" onclick="deleteEntry(${entry.id})">Delete entry</button>
                 </div>
             `;
@@ -1997,11 +2100,68 @@
             return str.split(',').filter(Boolean).map(m => mealLabels[m] || m).join(', ');
         }
 
+        function updateSliderFill(slider) {
+            const min = slider.min || 1;
+            const max = slider.max || 10;
+            const pct = ((slider.value - min) / (max - min)) * 100;
+            slider.style.background = `linear-gradient(to right, var(--color-text-primary) ${pct}%, var(--color-border-secondary) ${pct}%)`;
+        }
+
         function mealCount(meals) {
             if (!meals) return 0;
             const str = meals.toString();
             if (/^\d+$/.test(str)) return parseInt(str);
             return str.split(',').filter(Boolean).length;
+        }
+
+        function editEntry(id) {
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+
+            closeModal();
+
+            // Set the date to this entry's date
+            selectedEntryDate = entry.date;
+            localStorage.setItem('selectedEntryDate', selectedEntryDate);
+            setDateDisplay(selectedEntryDate);
+            document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
+
+            // Convert entry format to draft format and save so autosave works
+            draftData = {
+                mood: entry.mood || '',
+                meds: entry.meds,
+                depression: entry.depression?.toString(),
+                anxiety: entry.anxiety?.toString(),
+                suicidal_ideation: entry.suicidal_ideation?.toString(),
+                sib_urges: entry.sib_urges?.toString(),
+                sib_carried_out: entry.sib_carried_out,
+                tib: entry.tib,
+                sleep: entry.sleep?.toString(),
+                meals: entry.meals || '',
+                exercise: entry.exercise || '',
+                diary_entry: entry.diary_entry || '',
+                feelings: entry.feelings || '',
+                positive: entry.positive_experiences || '',
+                gratitude: entry.gratitude || ''
+            };
+
+            if (entry.skills && Array.isArray(entry.skills)) {
+                draftData.skills = {};
+                entry.skills.forEach(s => { draftData.skills[s.skill] = s.note || ''; });
+            }
+
+            db.ref('drafts/' + selectedEntryDate).set(draftData);
+
+            // clearFormUI resets draftData, so preserve and restore
+            const savedDraft = draftData;
+            clearFormUI();
+            draftData = savedDraft;
+            restoreDraftUI();
+            restoreSkillsFromDraft();
+            if (draftData.mood) updateMoodTrigger(draftData.mood);
+
+            switchTab('entry');
+            showWizardStep(0);
         }
 
         window.closeModal = closeModal;
@@ -2010,6 +2170,7 @@
         window.completeEntry = completeEntry;
         window.resetEntry = resetEntry;
         window.toggleSkill = toggleSkill;
+        window.editEntry = editEntry;
 
         init();
     </script>

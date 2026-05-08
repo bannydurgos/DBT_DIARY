@@ -1,19 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <!-- Background -->
-  <rect width="512" height="512" rx="115" fill="#7C3AED"/>
+  <rect width="512" height="512" rx="115" fill="#1A2E4A"/>
 
   <!-- Journal spine -->
-  <rect x="128" y="86" width="48" height="320" rx="10" fill="#4C1D95"/>
-  <rect x="160" y="86" width="16" height="320" fill="#5B21B6"/>
+  <rect x="128" y="86" width="48" height="320" rx="10" fill="#0D1C30"/>
+  <rect x="160" y="86" width="16" height="320" fill="#122038"/>
 
   <!-- Journal pages -->
-  <rect x="168" y="86" width="218" height="320" rx="10" fill="#FFFBEF"/>
+  <rect x="168" y="86" width="218" height="320" rx="10" fill="#FAF6EE"/>
 
   <!-- Ruled lines -->
-  <line x1="192" y1="295" x2="362" y2="295" stroke="#E5D9B6" stroke-width="5" stroke-linecap="round"/>
-  <line x1="192" y1="322" x2="362" y2="322" stroke="#E5D9B6" stroke-width="5" stroke-linecap="round"/>
-  <line x1="192" y1="349" x2="362" y2="349" stroke="#E5D9B6" stroke-width="5" stroke-linecap="round"/>
-  <line x1="192" y1="376" x2="362" y2="376" stroke="#E5D9B6" stroke-width="5" stroke-linecap="round"/>
+  <line x1="192" y1="295" x2="362" y2="295" stroke="#A0B4C4" stroke-width="5" stroke-linecap="round"/>
+  <line x1="192" y1="322" x2="362" y2="322" stroke="#A0B4C4" stroke-width="5" stroke-linecap="round"/>
+  <line x1="192" y1="349" x2="362" y2="349" stroke="#A0B4C4" stroke-width="5" stroke-linecap="round"/>
+  <line x1="192" y1="376" x2="362" y2="376" stroke="#A0B4C4" stroke-width="5" stroke-linecap="round"/>
 
   <!-- ===== BRAIN ===== -->
   <!-- Left lobe -->
@@ -26,7 +26,7 @@
     C 230 124 242 128 248 136
     C 252 126 262 120 273 122
     C 277 122 277 122 277 122 Z
-  " fill="#F9A8C9"/>
+  " fill="#2E6A9A"/>
 
   <!-- Right lobe -->
   <path d="
@@ -38,23 +38,23 @@
     C 324 124 312 128 306 136
     C 302 126 292 120 281 122
     C 277 122 277 122 277 122 Z
-  " fill="#F9A8C9"/>
+  " fill="#2E6A9A"/>
 
   <!-- Brain bottom rounded base -->
-  <ellipse cx="277" cy="248" rx="55" ry="14" fill="#F9A8C9"/>
+  <ellipse cx="277" cy="248" rx="55" ry="14" fill="#2E6A9A"/>
 
   <!-- Center crease -->
-  <line x1="277" y1="125" x2="277" y2="252" stroke="#E879A8" stroke-width="3" stroke-linecap="round"/>
+  <line x1="277" y1="125" x2="277" y2="252" stroke="#1A4468" stroke-width="3" stroke-linecap="round"/>
 
   <!-- Left lobe gyri (bumps) -->
-  <path d="M 210 175 Q 203 162 213 155" stroke="#E879A8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-  <path d="M 228 150 Q 233 138 244 138" stroke="#E879A8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-  <path d="M 196 205 Q 188 195 193 185" stroke="#E879A8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M 210 175 Q 203 162 213 155" stroke="#1A4468" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M 228 150 Q 233 138 244 138" stroke="#1A4468" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M 196 205 Q 188 195 193 185" stroke="#1A4468" stroke-width="3.5" fill="none" stroke-linecap="round"/>
 
   <!-- Right lobe gyri (bumps) -->
-  <path d="M 344 175 Q 351 162 341 155" stroke="#E879A8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-  <path d="M 326 150 Q 321 138 310 138" stroke="#E879A8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-  <path d="M 358 205 Q 366 195 361 185" stroke="#E879A8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M 344 175 Q 351 162 341 155" stroke="#1A4468" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M 326 150 Q 321 138 310 138" stroke="#1A4468" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M 358 205 Q 366 195 361 185" stroke="#1A4468" stroke-width="3.5" fill="none" stroke-linecap="round"/>
 
   <!-- DBT text -->
   <text
@@ -62,7 +62,7 @@
     font-family="'Georgia', 'Times New Roman', serif"
     font-size="62"
     font-weight="bold"
-    fill="#5B21B6"
+    fill="#0D1520"
     text-anchor="middle"
     letter-spacing="2"
   >DBT</text>
