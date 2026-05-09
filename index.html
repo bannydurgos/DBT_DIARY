@@ -921,6 +921,10 @@
                 display: none !important;
             }
 
+            #dateTodayMobile {
+                display: block !important;
+            }
+
             .wizard-step:not(:first-child) {
                 display: none !important;
             }
@@ -950,6 +954,7 @@
                     <div id="entryDateDisplay" style="flex:1; cursor:pointer;" title="Click to pick a date"></div>
                     <input type="date" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;" />
                     <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size: 18px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&gt;</button>
+                    <button type="button" id="dateTodayMobile" style="display:none;background:var(--color-info);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:500;padding:0.35rem 0.6rem;flex-shrink:0;text-transform:uppercase;letter-spacing:0.5px;">Today</button>
                 </div>
             </div>
 
@@ -1348,6 +1353,7 @@
             document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
             document.getElementById('datePrev').addEventListener('click', () => shiftEntryDate(-1));
             document.getElementById('dateNext').addEventListener('click', () => shiftEntryDate(1));
+            document.getElementById('dateTodayMobile').addEventListener('click', () => document.getElementById('dateToday').click());
             document.getElementById('dateToday').addEventListener('click', () => {
                 const today = getEasternDate();
                 if (selectedEntryDate !== today) {
