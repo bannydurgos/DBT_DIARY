@@ -1171,7 +1171,9 @@
             </div><!-- end wizard-step 5 -->
 
             </div><!-- end content -->
-            <button type="button" id="stepNext" class="btn-primary" onclick="wizardNext()" style="display:none;width:100%;margin-top:1rem;padding:0.65rem;background:#2D9E4F;color:#ffffff;">DONE</button>
+            <div style="text-align:center;margin-top:1rem;">
+                <button type="button" id="stepNext" class="btn-primary" onclick="wizardNext()" style="display:none;padding:0.65rem 2rem;background:#2D9E4F;color:#ffffff;">DONE</button>
+            </div>
             </div><!-- end wizard-nav-row -->
         </div>
 
@@ -1327,7 +1329,7 @@
             const dots = document.querySelectorAll('.step-dot');
             steps.forEach((el, i) => el.classList.toggle('active', i === n));
             dots.forEach((dot, i) => dot.classList.toggle('active', i === n));
-            document.getElementById('stepNext').style.display = n === steps.length - 1 ? 'block' : 'none';
+            document.getElementById('stepNext').style.display = n === steps.length - 1 ? 'inline-block' : 'none';
             currentWizardStep = n;
             localStorage.setItem('wizardStep', n);
 
