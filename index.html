@@ -625,27 +625,30 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 110px));
+            justify-content: start;
+            gap: 0.6rem;
             margin-bottom: 2rem;
         }
 
         .stat-card {
             background: var(--color-background-secondary);
             border-radius: var(--border-radius-lg);
-            padding: 1rem;
+            padding: 0.6rem 0.5rem;
             text-align: center;
+            width: 110px;
+            box-sizing: border-box;
         }
 
         .stat-number {
             font-size: 11px;
             font-weight: 500;
             line-height: 1;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .stat-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--color-text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.4px;
@@ -746,14 +749,14 @@
 
         .skills-list {
             display: grid;
-            gap: 1rem;
+            gap: 0.4rem;
         }
 
         .skill-item {
             background: var(--color-background-secondary);
             border: 1px solid var(--color-border-tertiary);
             border-radius: var(--border-radius-md);
-            padding: 1rem;
+            padding: 0.45rem 0.75rem;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -770,9 +773,10 @@
 
         .skill-name {
             font-weight: 500;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             text-transform: uppercase;
             letter-spacing: 0.4px;
+            font-size: 11px;
         }
 
         .skill-input {
@@ -882,7 +886,12 @@
             }
 
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(auto-fill, minmax(100px, 100px));
+                justify-content: start;
+            }
+
+            .stat-card {
+                width: 100px;
             }
 
             /* Entry tab: stack date below the autosave notice */
@@ -941,7 +950,6 @@
                     <button type="button" id="datePrev" style="background:none;border:none;cursor:pointer;font-size: 18px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&lt;</button>
                     <div id="entryDateDisplay" style="flex:1; cursor:pointer;" title="Click to pick a date"></div>
                     <input type="date" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;" />
-                    <button type="button" id="dateToday" style="background:none;border:1px solid var(--color-text-secondary);border-radius:4px;cursor:pointer;font-size:11px;padding:2px 6px;color:var(--color-text-secondary);flex-shrink:0;line-height:1.4;">Today</button>
                     <button type="button" id="dateNext" style="background:none;border:none;cursor:pointer;font-size: 18px;padding:0 0.25rem;color:var(--color-text-secondary);flex-shrink:0;">&gt;</button>
                 </div>
             </div>
@@ -952,6 +960,7 @@
                 <button type="button" class="step-dot" onclick="showWizardStep(1)">Diary</button>
                 <button type="button" class="step-dot" onclick="showWizardStep(2)">Skills</button>
                 <button type="button" class="step-dot" onclick="showWizardStep(3)">Reflections</button>
+                <button type="button" id="dateToday" class="step-dot" style="background:var(--color-info);color:#fff;">Today</button>
             </div>
 
             <div class="wizard-nav-row" style="display:flex;align-items:center;gap:0.75rem;">
@@ -1290,7 +1299,7 @@
                 localStorage.setItem('selectedEntryDate', selectedEntryDate);
                 setDateDisplay(selectedEntryDate);
                 document.getElementById('dateNext').style.opacity = selectedEntryDate === today ? '0.3' : '1';
-                showWizardStep(0);
+                showWizardStep(currentWizardStep);
                 loadDraftForDate(selectedEntryDate);
             }
         }
@@ -1352,7 +1361,7 @@
                     setDateDisplay(selectedEntryDate);
                     document.getElementById('dateNext').style.opacity = '0.3';
                     document.getElementById('datePicker').value = today;
-                    showWizardStep(0);
+                    showWizardStep(currentWizardStep);
                     loadDraftForDate(selectedEntryDate);
                 }
             });
@@ -1367,7 +1376,7 @@
                     localStorage.setItem('selectedEntryDate', selectedEntryDate);
                     setDateDisplay(selectedEntryDate);
                     document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
-                    showWizardStep(0);
+                    showWizardStep(currentWizardStep);
                     loadDraftForDate(selectedEntryDate);
                 }
             });
@@ -2062,52 +2071,22 @@
                 }
             });
 
-            const statsHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${entries.length}</div>
-                    <div class="stat-label">Total entries</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${medsCount}</div>
-                    <div class="stat-label">Days took meds</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${exerciseCount}</div>
-                    <div class="stat-label">Days exercised</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${avgSleep}</div>
-                    <div class="stat-label">Avg sleep</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${avgMeals}</div>
-                    <div class="stat-label">Avg meals</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${avgDepression}</div>
-                    <div class="stat-label">Avg depression</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${avgAnxiety}</div>
-                    <div class="stat-label">Avg anxiety</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${avgSI}</div>
-                    <div class="stat-label">Avg S.I.</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${avgSIB}</div>
-                    <div class="stat-label">Avg S.I.B. urges</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${sibCarriedOut}</div>
-                    <div class="stat-label">Days S.I.B. carried out</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${tibCount}</div>
-                    <div class="stat-label">Days T.I.B.</div>
-                </div>
-            `;
+            const statCard = (value, label) =>
+                parseFloat(value) === 0 ? '' :
+                `<div class="stat-card"><div class="stat-number">${value}</div><div class="stat-label">${label}</div></div>`;
+
+            const statsHTML =
+                statCard(entries.length, 'Total entries') +
+                statCard(medsCount, 'Days took meds') +
+                statCard(exerciseCount, 'Days exercised') +
+                statCard(avgSleep, 'Avg sleep') +
+                statCard(avgMeals, 'Avg meals') +
+                statCard(avgDepression, 'Avg depression') +
+                statCard(avgAnxiety, 'Avg anxiety') +
+                statCard(avgSI, 'Avg S.I.') +
+                statCard(avgSIB, 'Avg S.I.B. urges') +
+                statCard(sibCarriedOut, 'Days S.I.B. carried out') +
+                statCard(tibCount, 'Days T.I.B.');
 
             document.getElementById('statsGrid').innerHTML = statsHTML;
 
