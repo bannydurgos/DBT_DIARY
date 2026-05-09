@@ -937,7 +937,6 @@
             <div class="tabs">
                 <button class="tab-button active" data-tab="entry">New entry</button>
                 <button class="tab-button" data-tab="daily-notes">Daily notes</button>
-                <button class="tab-button" data-tab="view">View entries</button>
                 <button class="tab-button" data-tab="mood-history">Mood history</button>
                 <button class="tab-button" data-tab="insights">Insights</button>
             </div>
@@ -1151,11 +1150,6 @@
             </div><!-- end flex row -->
         </div>
 
-
-        <!-- View Entries Tab -->
-        <div id="view" class="tab-content">
-            <div id="entriesList" class="entries-list"></div>
-        </div>
 
         <!-- Mood History Tab -->
         <div id="mood-history" class="tab-content">
@@ -1701,7 +1695,6 @@
             document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
             localStorage.setItem('activeTab', tabName);
 
-            if (tabName === 'view') renderEntries();
             if (tabName === 'mood-history') renderMoodMosaic();
             if (tabName === 'insights') renderInsights();
             if (tabName === 'entry') alignStepDotsToLine();
