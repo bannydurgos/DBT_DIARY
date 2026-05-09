@@ -932,6 +932,10 @@
             .wizard-step:first-child {
                 display: block !important;
             }
+
+            #dailyNotesMobileSection {
+                display: block !important;
+            }
         }
     </style>
 </head>
@@ -940,7 +944,6 @@
         <div class="toolbar">
             <div class="tabs">
                 <button class="tab-button active" data-tab="entry">New entry</button>
-                <button class="tab-button" data-tab="daily-notes">Daily notes</button>
                 <button class="tab-button" data-tab="mood-history">Mood history</button>
                 <button class="tab-button" data-tab="insights">Insights</button>
             </div>
@@ -958,12 +961,20 @@
                 </div>
             </div>
 
+            <!-- Mobile: Daily notes (centered below date) -->
+            <div id="dailyNotesMobileSection" style="display:none; text-align:center; margin-bottom:1rem;">
+                <div style="font-size: 11px; font-weight: 500; margin-bottom: 0.5rem; color: var(--color-text-primary);" id="dailyNotesDateMobile"></div>
+                <textarea id="dailyNotesTextMobile" placeholder="Scribble anything here..." style="min-height: 200px; font-size: 11px; line-height: 2; width:100%;"></textarea>
+                <div style="margin-top: 0.5rem; font-size: 11px; color: var(--color-text-tertiary);" id="dailyNotesSavedMobile"></div>
+            </div>
+
             <!-- Step dots -->
             <div class="step-dots">
                 <button type="button" class="step-dot active" onclick="showWizardStep(0)">Check-in</button>
-                <button type="button" class="step-dot" onclick="showWizardStep(1)">Diary</button>
-                <button type="button" class="step-dot" onclick="showWizardStep(2)">Skills</button>
-                <button type="button" class="step-dot" onclick="showWizardStep(3)">Reflections</button>
+                <button type="button" class="step-dot" onclick="showWizardStep(1)">Notes</button>
+                <button type="button" class="step-dot" onclick="showWizardStep(2)">Diary</button>
+                <button type="button" class="step-dot" onclick="showWizardStep(3)">Skills</button>
+                <button type="button" class="step-dot" onclick="showWizardStep(4)">Reflections</button>
                 <button type="button" id="dateToday" class="step-dot" style="background:var(--color-info);color:#fff;">Today</button>
             </div>
 
@@ -1111,24 +1122,33 @@
             </div>
             </div><!-- end wizard-step 1 -->
 
-            <!-- Wizard Step 2: Daily Diary -->
+            <!-- Wizard Step 2: Daily Notes -->
+            <div class="wizard-step">
+            <div class="form-section">
+                <div style="font-size: 11px; font-weight: 500; margin-bottom: 1rem; color: var(--color-text-primary);" id="dailyNotesDate"></div>
+                <textarea id="dailyNotesText" placeholder="Scribble anything here..." style="min-height: 400px; font-size: 11px; line-height: 2;"></textarea>
+                <div style="margin-top: 0.75rem; font-size: 11px; color: var(--color-text-tertiary);" id="dailyNotesSaved"></div>
+            </div>
+            </div><!-- end wizard-step 2 -->
+
+            <!-- Wizard Step 3: Daily Diary -->
             <div class="wizard-step">
             <div class="section-card">
                 <div class="section-title">Daily diary entry</div>
                 <textarea id="diaryEntry" placeholder="What happened today? How did you handle it? Updates save as you type..." style="min-height: 400px; line-height: 2;"></textarea>
             </div>
-            </div><!-- end wizard-step 2 -->
+            </div><!-- end wizard-step 3 -->
 
-            <!-- Wizard Step 3: Skills Used -->
+            <!-- Wizard Step 4: Skills Used -->
             <div class="wizard-step">
             <div class="section-card">
                 <div class="section-title">Skills used today</div>
                 <div class="skills-list" id="skillsList">
                 </div>
             </div>
-            </div><!-- end wizard-step 3 -->
+            </div><!-- end wizard-step 4 -->
 
-            <!-- Wizard Step 4: Reflections -->
+            <!-- Wizard Step 5: Reflections -->
             <div class="wizard-step">
             <div class="section-card">
                 <div class="section-title">Reflections</div>
@@ -1147,7 +1167,7 @@
                     </div>
                 </div>
             </div>
-            </div><!-- end wizard-step 4 -->
+            </div><!-- end wizard-step 5 -->
 
             </div><!-- end flex content -->
             <button type="button" id="stepNext" class="btn-primary" onclick="wizardNext()" style="flex-shrink:0;padding:0.6rem 0.5rem;writing-mode:vertical-lr;background:#2D9E4F;color:#ffffff;visibility:hidden;">DONE</button>
@@ -1167,13 +1187,7 @@
             <div id="insightsContent"></div>
         </div>
 
-        <div id="daily-notes" class="tab-content">
-            <div class="form-section">
-                <div style="font-size: 11px; font-weight: 500; margin-bottom: 1rem; color: var(--color-text-primary);" id="dailyNotesDate"></div>
-                <textarea id="dailyNotesText" placeholder="Scribble anything here..." style="min-height: 400px; font-size: 11px; line-height: 2;"></textarea>
-                <div style="margin-top: 0.75rem; font-size: 11px; color: var(--color-text-tertiary);" id="dailyNotesSaved"></div>
-            </div>
-        </div>
+
     </div>
 
     <!-- Entry Detail Modal -->
@@ -1285,6 +1299,8 @@
             });
             loadDailyNotesForDate(date);
             document.getElementById('dailyNotesDate').textContent = formatEntryDate(date);
+            const dnDateMobile = document.getElementById('dailyNotesDateMobile');
+            if (dnDateMobile) dnDateMobile.textContent = formatEntryDate(date);
         }
 
         function shiftEntryDate(days) {
@@ -1302,7 +1318,7 @@
             }
         }
 
-        const wizardStepLabels = ['Daily check-in', 'Daily diary', 'Skills used', 'Reflections'];
+        const wizardStepLabels = ['Daily check-in', 'Daily notes', 'Daily diary', 'Skills used', 'Reflections'];
         let currentWizardStep = 0;
 
         function showWizardStep(n) {
@@ -1383,6 +1399,8 @@
             });
 
             document.getElementById('dailyNotesDate').textContent = formatEntryDate(selectedEntryDate);
+            const dnDateMobileInit = document.getElementById('dailyNotesDateMobile');
+            if (dnDateMobileInit) dnDateMobileInit.textContent = formatEntryDate(selectedEntryDate);
 
             const savedStep = parseInt(localStorage.getItem('wizardStep') || '0', 10);
             showWizardStep(savedStep);
@@ -1527,18 +1545,24 @@
         function setupDailyNotes() {
             const textarea = document.getElementById('dailyNotesText');
             const savedLabel = document.getElementById('dailyNotesSaved');
+            const textareaMobile = document.getElementById('dailyNotesTextMobile');
+            const savedLabelMobile = document.getElementById('dailyNotesSavedMobile');
             let saveTimer;
 
-            function saveDailyNotes() {
+            function saveDailyNotes(sourceTextarea) {
                 clearTimeout(saveTimer);
                 savedLabel.textContent = '';
+                if (savedLabelMobile) savedLabelMobile.textContent = '';
                 saveTimer = setTimeout(() => {
-                    db.ref('dailyNotes/' + selectedEntryDate).set(textarea.value);
+                    db.ref('dailyNotes/' + selectedEntryDate).set(sourceTextarea.value);
+                    if (textarea !== sourceTextarea) textarea.value = sourceTextarea.value;
+                    if (textareaMobile && textareaMobile !== sourceTextarea) textareaMobile.value = sourceTextarea.value;
                     savedLabel.textContent = 'Saved';
+                    if (savedLabelMobile) savedLabelMobile.textContent = 'Saved';
                 }, 600);
             }
 
-            textarea.addEventListener('input', saveDailyNotes);
+            textarea.addEventListener('input', () => saveDailyNotes(textarea));
 
             textarea.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
@@ -1553,13 +1577,13 @@
                         const removeFrom = lineStart > 0 && val[lineStart - 1] === '\n' ? lineStart - 1 : lineStart;
                         textarea.value = val.slice(0, removeFrom) + val.slice(pos);
                         textarea.selectionStart = textarea.selectionEnd = removeFrom;
-                        saveDailyNotes();
+                        saveDailyNotes(textarea);
                         return;
                     }
                     const insert = '\n• ';
                     textarea.value = val.slice(0, pos) + insert + val.slice(pos);
                     textarea.selectionStart = textarea.selectionEnd = pos + insert.length;
-                    saveDailyNotes();
+                    saveDailyNotes(textarea);
                 }
             });
 
@@ -1569,16 +1593,31 @@
                     textarea.selectionStart = textarea.selectionEnd = 2;
                 }
             });
+
+            if (textareaMobile) {
+                textareaMobile.addEventListener('input', () => saveDailyNotes(textareaMobile));
+                textareaMobile.addEventListener('focus', () => {
+                    if (textareaMobile.value === '') {
+                        textareaMobile.value = '• ';
+                        textareaMobile.selectionStart = textareaMobile.selectionEnd = 2;
+                    }
+                });
+            }
         }
 
         function loadDailyNotesForDate(date) {
             const textarea = document.getElementById('dailyNotesText');
             const savedLabel = document.getElementById('dailyNotesSaved');
+            const textareaMobile = document.getElementById('dailyNotesTextMobile');
+            const savedLabelMobile = document.getElementById('dailyNotesSavedMobile');
             savedLabel.textContent = '';
+            if (savedLabelMobile) savedLabelMobile.textContent = '';
             textarea.value = '';
+            if (textareaMobile) textareaMobile.value = '';
             db.ref('dailyNotes/' + date).once('value').then(snapshot => {
                 const val = snapshot.val() || '';
                 textarea.value = val;
+                if (textareaMobile) textareaMobile.value = val;
             });
         }
 
@@ -1695,6 +1734,7 @@
         }
 
         function switchTab(tabName) {
+            if (tabName === 'daily-notes') tabName = 'entry';
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
 
