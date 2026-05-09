@@ -963,7 +963,6 @@
             </div>
 
             <div class="wizard-nav-row" style="display:flex;align-items:center;gap:0.75rem;">
-            <button type="button" id="stepBack" class="btn-secondary" onclick="wizardBack()" style="visibility:hidden;flex-shrink:0;padding:0.6rem 0.5rem;writing-mode:vertical-lr;transform:rotate(180deg);">BACK</button>
             <div style="flex:1;min-width:0;">
 
             <!-- Wizard Step 1: Daily check-in -->
@@ -1146,7 +1145,7 @@
             </div><!-- end wizard-step 4 -->
 
             </div><!-- end flex content -->
-            <button type="button" id="stepNext" class="btn-primary" onclick="wizardNext()" style="flex-shrink:0;padding:0.6rem 0.5rem;writing-mode:vertical-lr;">NEXT</button>
+            <button type="button" id="stepNext" class="btn-primary" onclick="wizardNext()" style="flex-shrink:0;padding:0.6rem 0.5rem;writing-mode:vertical-lr;background:#2D9E4F;color:#ffffff;visibility:hidden;">DONE</button>
             </div><!-- end flex row -->
         </div>
 
@@ -1306,12 +1305,7 @@
             const dots = document.querySelectorAll('.step-dot');
             steps.forEach((el, i) => el.classList.toggle('active', i === n));
             dots.forEach((dot, i) => dot.classList.toggle('active', i === n));
-            document.getElementById('stepBack').style.visibility = n === 0 ? 'hidden' : 'visible';
-            const isLast = n === steps.length - 1;
-            const nextBtn = document.getElementById('stepNext');
-            nextBtn.textContent = isLast ? 'DONE' : 'NEXT';
-            nextBtn.style.background = isLast ? '#2D9E4F' : '';
-            nextBtn.style.color = isLast ? '#ffffff' : '';
+            document.getElementById('stepNext').style.visibility = n === steps.length - 1 ? 'visible' : 'hidden';
             currentWizardStep = n;
             localStorage.setItem('wizardStep', n);
 
@@ -1327,16 +1321,23 @@
         }
 
         function wizardNext() {
-            const steps = document.querySelectorAll('.wizard-step');
-            if (currentWizardStep === steps.length - 1) {
-                completeEntry();
-            } else {
-                showWizardStep(currentWizardStep + 1);
-            }
-        }
+            // Remove any existing confirmation toast first
+            const existing = document.getElementById('doneConfirmToast');
+            if (existing) { existing.remove(); return; }
 
-        function wizardBack() {
-            if (currentWizardStep > 0) showWizardStep(currentWizardStep - 1);
+            const toast = document.createElement('div');
+            toast.id = 'doneConfirmToast';
+            toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0D1520;color:#FDFAF4;padding:0.75rem 1.1rem;border-radius:8px;font-size:12px;z-index:9999;display:flex;flex-direction:column;gap:0.6rem;box-shadow:0 4px 16px rgba(0,0,0,0.3);';
+            toast.innerHTML = `
+                <span>Are you done with today's entry?</span>
+                <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+                    <button onclick="document.getElementById('doneConfirmToast').remove()" style="background:transparent;border:1px solid rgba(253,250,244,0.3);color:#FDFAF4;padding:0.3rem 0.7rem;border-radius:5px;cursor:pointer;font-size:11px;">Not yet</button>
+                    <button onclick="document.getElementById('doneConfirmToast').remove();completeEntry();" style="background:#2D9E4F;border:none;color:#fff;padding:0.3rem 0.7rem;border-radius:5px;cursor:pointer;font-size:11px;">Yes, done!</button>
+                </div>`;
+            document.body.appendChild(toast);
+
+            // Auto-dismiss after 6 seconds
+            setTimeout(() => { if (document.getElementById('doneConfirmToast')) toast.remove(); }, 6000);
         }
 
         function init() {
