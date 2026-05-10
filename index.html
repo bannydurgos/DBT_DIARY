@@ -806,7 +806,7 @@
             border-radius: 0;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -817,7 +817,8 @@
 
         .mosaic-tile:hover {
             transform: scale(1.05);
-            border-color: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            position: relative;
         }
 
         @media (max-width: 600px) {
