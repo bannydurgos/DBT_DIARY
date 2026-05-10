@@ -1043,7 +1043,7 @@
                         </div>
                     </div>
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
-                        <label class="question-label" style="margin:0;white-space:nowrap;">Suicidal ideation</label>
+                        <label class="question-label" style="margin:0;white-space:nowrap;">S.I.</label>
                         <div style="display:flex;gap:0.3rem;">
                             <button type="button" class="option-button" data-field="suicidal_ideation" data-value="0">0</button>
                             <button type="button" class="option-button" data-field="suicidal_ideation" data-value="1">1</button>
@@ -2138,7 +2138,7 @@
             let insightsHTML = '';
             
             if (avgSI > 2) {
-                insightsHTML += '<div style="background: var(--color-danger, #f87171); background-opacity: 0.2; padding: 1rem; border-radius: var(--border-radius-lg); margin-bottom: 1rem; border-left: 4px solid var(--color-danger, #f87171);"><div style="font-weight: 500; margin-bottom: 0.5rem; text-transform:uppercase; letter-spacing:0.4px;">ALERT: ELEVATED S.I.</div><div style="font-size: 11px;">Your average suicidal ideation is above 2. Please reach out to a therapist or crisis line if needed.</div></div>';
+                insightsHTML += '<div style="background: var(--color-danger, #f87171); background-opacity: 0.2; padding: 1rem; border-radius: var(--border-radius-lg); margin-bottom: 1rem; border-left: 4px solid var(--color-danger, #f87171);"><div style="font-weight: 500; margin-bottom: 0.5rem; text-transform:uppercase; letter-spacing:0.4px;">ALERT: ELEVATED S.I.</div><div style="font-size: 11px;">Your average S.I. is above 2. Please reach out to a therapist or crisis line if needed.</div></div>';
             }
 
             if (sibCarriedOut > 0) {
