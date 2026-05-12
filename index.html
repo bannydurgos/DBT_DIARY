@@ -1803,11 +1803,7 @@
         }
 
         function completeEntry() {
-            const allFilled = screeningFields.every(field => draftData[field] !== undefined);
-            if (!allFilled) {
-                alert('Please complete the daily check-in questions');
-                return;
-            }
+
 
             const skillsArray = draftData.skills ? Object.entries(draftData.skills).map(([skill, note]) => ({ skill, note })) : [];
 
