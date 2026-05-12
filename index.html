@@ -1236,7 +1236,7 @@
             { name: 'Envy', color: '#A8D5B5' },
             { name: 'Ennui', color: '#B0C4DE' },
             { name: 'Embarrassment', color: '#F4B8C8' },
-            { name: 'Nostalgia', color: '#E8C9A0' }
+            { name: 'Nostalgia', color: '#C8C8C8' }
         ];
 
         const skills = [
@@ -2008,7 +2008,18 @@
                 <!-- Date + mood row -->
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
                     <div style="font-size:11px;color:var(--color-text-secondary);">${formatDate(entry.date)} at ${entry.time}</div>
-                    ${entry.mood ? `<div style="display:flex;align-items:center;gap:0.4rem;font-size:11px;font-weight:500;"><div style="width:12px;height:12px;border-radius:3px;background:${getMoodColor(entry.mood)};border:1px solid rgba(0,0,0,0.1);"></div>${entry.mood}</div>` : ''}
+                    <div class="mood-dropdown" id="modalMoodDropdown-${entry.id}">
+                        <button type="button" class="mood-trigger" id="modalMoodTrigger-${entry.id}">
+                            <span style="display:flex;align-items:center;gap:0.5rem;">
+                                <span class="mood-trigger-swatch" id="modalMoodSwatch-${entry.id}" style="${entry.mood ? `background:${getMoodColor(entry.mood)};` : 'display:none;'}"></span>
+                                <span id="modalMoodLabel-${entry.id}">${entry.mood || 'MOOD'}</span>
+                            </span>
+                            <span class="mood-trigger-arrow">▼</span>
+                        </button>
+                        <div class="mood-menu" id="modalMoodMenu-${entry.id}">
+                            ${moods.map(m => `<button type="button" class="mood-option" style="background-color:${m.color};" onclick="quickUpdateMood(${entry.id},'${m.name}')">${m.name}</button>`).join('')}
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Compact stats grid -->
@@ -2073,11 +2084,31 @@
             `;
 
             modal.classList.add('active');
+
+            const trigger = document.getElementById(`modalMoodTrigger-${entry.id}`);
+            const menu = document.getElementById(`modalMoodMenu-${entry.id}`);
+            const dropdown = document.getElementById(`modalMoodDropdown-${entry.id}`);
+            trigger.addEventListener('click', () => menu.classList.toggle('open'));
+            document.addEventListener('click', function closeMenu(e) {
+                if (!dropdown.contains(e.target)) {
+                    menu.classList.remove('open');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
         }
 
         function closeModal() {
             document.getElementById('entryModal').classList.remove('active');
         }
+
+        function quickUpdateMood(id, moodName) {
+            const entry = entries.find(e => e.id === id);
+            if (!entry) return;
+            entry.mood = moodName;
+            saveToStorage();
+            showEntryDetail(id);
+        }
+        window.quickUpdateMood = quickUpdateMood;
 
         function deleteEntry(id) {
             if (confirm('Are you sure you want to delete this entry?')) {
