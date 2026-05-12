@@ -1350,7 +1350,7 @@
             const dots = document.querySelectorAll('.step-dot');
             steps.forEach((el, i) => el.classList.toggle('active', i === n));
             dots.forEach((dot, i) => dot.classList.toggle('active', i === n));
-            document.getElementById('stepNext').style.display = n === steps.length - 1 ? 'inline-block' : 'none';
+            document.getElementById('stepNext').style.display = 'inline-block';
             currentWizardStep = n;
             localStorage.setItem('wizardStep', n);
 
@@ -1366,6 +1366,13 @@
         }
 
         function wizardNext() {
+            const steps = document.querySelectorAll('.wizard-step');
+            // If not on the last step, advance to the next step
+            if (currentWizardStep < steps.length - 1) {
+                showWizardStep(currentWizardStep + 1);
+                return;
+            }
+
             // Remove any existing confirmation toast first
             const existing = document.getElementById('doneConfirmToast');
             if (existing) { existing.remove(); return; }
