@@ -1448,7 +1448,8 @@
         function setupFirebaseListeners() {
             // Entries: real-time listener — re-renders all views on any change
             db.ref('entries').on('value', snapshot => {
-                entries = snapshot.val() || [];
+                const val = snapshot.val();
+                entries = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
                 renderEntries();
                 renderMoodMosaic();
                 renderInsights();
