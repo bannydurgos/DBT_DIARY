@@ -16,4 +16,6 @@ git add -A
 git commit -m "Update $(date '+%Y-%m-%d %H:%M')"
 git push -u origin main
 
-echo "Done! Live at https://bannydurgos.github.io/DBT_DIARY/"
+firebase deploy --only hosting
+
+echo "Done!"
