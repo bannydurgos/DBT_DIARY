@@ -1393,9 +1393,8 @@
         }
 
         function init() {
-            const savedDate = localStorage.getItem('selectedEntryDate');
             const today = getEasternDate();
-            selectedEntryDate = (savedDate && savedDate <= today) ? savedDate : today;
+            selectedEntryDate = today;
             setDateDisplay(selectedEntryDate);
             document.getElementById('dateNext').style.opacity = selectedEntryDate === getEasternDate() ? '0.3' : '1';
             document.getElementById('datePrev').addEventListener('click', () => shiftEntryDate(-1));
